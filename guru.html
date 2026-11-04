@@ -309,6 +309,28 @@
       return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
     }
 
+    // Helper untuk Format Tanggal Indonesia (Penanganan Tanggal ISO Fix)
+    function formatDateIndo(dateStr) {
+      if (!dateStr) return '-';
+      let cleanStr = String(dateStr);
+      if (cleanStr.includes('T')) {
+        cleanStr = cleanStr.split('T')[0];
+      }
+      const parts = cleanStr.split('-');
+      if (parts.length === 3) {
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+        }
+      }
+      return cleanStr;
+    }
+
+    function getTodayIso() {
+      const today = new Date();
+      return today.toISOString().split('T')[0];
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       initDates();
       renderBulkSiswa();
@@ -316,14 +338,14 @@
     });
 
     function initDates() {
-      const today = new Date();
+      const todayStr = getTodayIso();
       const elM = document.getElementById('m-tanggal');
       const elBulk = document.getElementById('bulk-tanggal');
       const elP = document.getElementById('p-tanggal');
       
-      if (elM && ('valueAsDate' in elM)) elM.valueAsDate = today;
-      if (elBulk && ('valueAsDate' in elBulk)) elBulk.valueAsDate = today;
-      if (elP && ('valueAsDate' in elP)) elP.valueAsDate = today;
+      if (elM) elM.value = todayStr;
+      if (elBulk) elBulk.value = todayStr;
+      if (elP) elP.value = todayStr;
     }
 
     function switchGuruTab(t) {
@@ -462,7 +484,7 @@
           <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5 text-xs">
             <div class="flex justify-between text-[10px]">
               <span class="bg-brand-950 text-brand-400 border border-brand-800 px-2 py-0.5 rounded-full font-bold">${item.Kategori || 'Umum'}</span>
-              <span class="text-slate-400">${item.Tanggal || ''}</span>
+              <span class="text-slate-400">${formatDateIndo(item.Tanggal)}</span>
             </div>
             <h4 class="font-bold text-white text-sm">${item.Judul}</h4>
             <p class="text-slate-300 leading-relaxed">${item.Isi_Pengumuman}</p>
@@ -496,7 +518,7 @@
               <span>${iz.ID_Siswa || ''} • ${iz.Nama_Siswa || 'Siswa'}</span>
               <span class="text-rose-400 bg-rose-950 border border-rose-800 px-2 py-0.5 rounded text-[10px]">${iz.Kategori || 'Izin'}</span>
             </div>
-            <p class="text-slate-400 text-[11px] pt-1">📅 <b>Periode:</b> ${iz.Tgl_Mulai} s.d ${iz.Tgl_Selesai}</p>
+            <p class="text-slate-400 text-[11px] pt-1">📅 <b>Periode:</b> ${formatDateIndo(iz.Tgl_Mulai)} s.d ${formatDateIndo(iz.Tgl_Selesai)}</p>
             <p class="text-slate-300 text-[11px]">💬 <b>Alasan:</b> ${iz.Alasan}</p>
           </div>
         `).join('');
@@ -526,7 +548,7 @@
               <span>${m.ID_Siswa || ''}</span>
               <span class="text-emerald-400 bg-emerald-950 border border-emerald-800 text-[10px] px-2 py-0.5 rounded">${m.Sumber || 'Sekolah'}</span>
             </div>
-            <p class="text-slate-400 text-[11px]"><b>📅 Tanggal:</b> ${m.Tanggal} | <b>Tilawah:</b> ${m.Tilawah_Surah}</p>
+            <p class="text-slate-400 text-[11px]"><b>📅 Tanggal:</b> ${formatDateIndo(m.Tanggal)} | <b>Tilawah:</b> ${m.Tilawah_Surah}</p>
             <p class="text-slate-300 text-[11px]"><b>💬 Catatan:</b> ${m.Catatan_Guru}</p>
           </div>
         `).join('');
