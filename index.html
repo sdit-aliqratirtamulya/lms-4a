@@ -286,11 +286,31 @@
 
     let CURRENT_USER = JSON.parse(localStorage.getItem('SDIT_IQRA_USER') || "null");
 
-    const DUMMY_USERS = {
-      "S001": { id: "S001", pin: "1234", nama: "Ahmad Fauzi", ortu: "Bapak Budi" },
-      "S002": { id: "S002", pin: "5678", nama: "Aisyah Nurul Rahma", ortu: "Ibu Siti" },
-      "S003": { id: "S003", pin: "1122", nama: "Bilal Al-Ghifari", ortu: "Bapak Ahmad" }
-    };
+    function isValidGasUrl(url) {
+      return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
+    }
+
+    // Helper untuk Format Tanggal Indonesia (Penanganan Tanggal ISO Fix)
+    function formatDateIndo(dateStr) {
+      if (!dateStr) return '-';
+      let cleanStr = String(dateStr);
+      if (cleanStr.includes('T')) {
+        cleanStr = cleanStr.split('T')[0];
+      }
+      const parts = cleanStr.split('-');
+      if (parts.length === 3) {
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+        }
+      }
+      return cleanStr;
+    }
+
+    function getTodayIso() {
+      const today = new Date();
+      return today.toISOString().split('T')[0];
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       if(CURRENT_USER) showAppScreen(); else showLoginScreen();
@@ -312,10 +332,10 @@
       const tglSelesai = document.getElementById('izin-tgl-selesai');
       const tglOrtuM = document.getElementById('ortu-m-tanggal');
       
-      // Safety check agar tidak crash jika elemen belum ter-render di DOM
-      if (tglMulai) tglMulai.valueAsDate = new Date();
-      if (tglSelesai) tglSelesai.valueAsDate = new Date();
-      if (tglOrtuM) tglOrtuM.valueAsDate = new Date();
+      const todayStr = getTodayIso();
+      if (tglMulai) tglMulai.value = todayStr;
+      if (tglSelesai) tglSelesai.value = todayStr;
+      if (tglOrtuM) tglOrtuM.value = todayStr;
 
       loadPengumuman();
       loadMutabaah();
@@ -352,6 +372,8 @@
         if(tab === t) {
           sec.classList.remove('hidden');
           btn.className = "py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white shadow-sm font-semibold";
+          if(t === 'info') loadPengumuman();
+          if(t === 'mutabaah') loadMutabaah();
         } else {
           sec.classList.add('hidden');
           btn.className = "py-2.5 rounded-xl text-slate-400 font-medium hover:text-slate-200";
@@ -359,87 +381,41 @@
       });
     }
 
-    function loadPengumuman() {
-      document.getElementById('list-pengumuman').innerHTML = `
-        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 space-y-1.5 text-xs">
-          <div class="flex justify-between text-[10px]">
-            <span class="bg-brand-950 text-brand-400 border border-brand-800 px-2 py-0.5 rounded-full font-bold">Kegiatan</span>
-            <span class="text-slate-400">2026-11-06</span>
+    async function loadPengumuman() {
+      const container = document.getElementById('list-pengumuman');
+      
+      if (!isValidGasUrl(GAS_URL)) {
+        container.innerHTML = `
+          <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 text-center text-xs text-amber-400">
+            ⚠️ Pengumuman Demo: Mohon atur URL GAS terlebih dahulu.
           </div>
-          <h3 class="font-bold text-sm text-white">Kegiatan Outbound Edukasi</h3>
-          <p class="text-xs text-slate-300 leading-relaxed">Assalamu'alaikum, mohon persiapkan baju olahraga anak-anak untuk esok hari.</p>
-        </div>
-      `;
-    }
-
-    function loadMutabaah() {
-      document.getElementById('list-mutabaah').innerHTML = `
-        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 space-y-2 text-xs">
-          <div class="flex justify-between border-b border-slate-800 pb-1.5 font-bold">
-            <span class="text-white flex items-center gap-1.5">📅 2026-11-05 <span class="bg-emerald-950 text-emerald-400 text-[9px] px-2 py-0.5 rounded border border-emerald-800">Rumah</span></span>
-            <span class="text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-full text-[10px]">Sangat Baik</span>
-          </div>
-          <div class="grid grid-cols-5 text-center text-[10px] bg-slate-950 p-2 rounded-xl text-slate-300 gap-1 border border-slate-800/80">
-            <div>Subuh<br><b class="text-emerald-400">Berjamaah</b></div>
-            <div>Dzuhur<br><b class="text-emerald-400">Berjamaah</b></div>
-            <div>Ashar<br><b class="text-emerald-400">Berjamaah</b></div>
-            <div>Maghrib<br><b class="text-emerald-400">Berjamaah</b></div>
-            <div>Isya<br><b class="text-amber-400">Munfarid</b></div>
-          </div>
-          <p class="text-slate-300">📖 <b>Tilawah:</b> An-Naba: 1-15 & Surah Al-Mulk</p>
-          <p class="text-slate-300">💬 <b>Catatan Ortu:</b> Ananda melaksana shalat tepat waktu saat libur.</p>
-        </div>
-      `;
-    }
-
-    async function handleSendMutabaahOrtu(e) {
-      e.preventDefault();
-      const btn = document.getElementById('btn-submit-ortu-m');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Mengirim Setoran...`;
-
-      const payload = {
-        action: 'addMutabaah',
-        id_siswa: CURRENT_USER.id,
-        nama_siswa: CURRENT_USER.nama,
-        tanggal: document.getElementById('ortu-m-tanggal').value,
-        subuh: document.getElementById('ortu-m-subuh').value,
-        dzuhur: document.getElementById('ortu-m-dzuhur').value,
-        ashar: document.getElementById('ortu-m-ashar').value,
-        maghrib: document.getElementById('ortu-m-maghrib').value,
-        isya: document.getElementById('ortu-m-isya').value,
-        tilawah: document.getElementById('ortu-m-tilawah').value || 'Selesai Tilawah',
-        adab: document.getElementById('ortu-m-adab').value,
-        catatan: (document.getElementById('ortu-m-catatan').value || 'Setoran dari Rumah') + " [Dhuha: " + document.getElementById('ortu-m-dhuha').value + "]",
-        sumber: 'Rumah (Ortu)'
-      };
-
-      if (!GAS_URL) {
-        setTimeout(() => {
-          alert('Setoran mutaba\'ah rumah berhasil terkirim ke Wali Kelas (Mode Demo)!');
-          e.target.reset();
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Kirim Mutaba'ah Rumah ke Wali Kelas`;
-          loadMutabaah();
-        }, 500);
+        `;
         return;
       }
 
+      container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat pengumuman terbaru...</div>`;
+
       try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        alert('Setoran mutaba\'ah rumah berhasil terkirim!');
-        e.target.reset();
-        loadMutabaah();
+        const res = await fetch(`${GAS_URL}?action=getPengumuman`);
+        const json = await res.json();
+        
+        if (!json.data || json.data.length === 0) {
+          container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Belum ada pengumuman dari Wali Kelas.</div>`;
+          return;
+        }
+
+        container.innerHTML = json.data.map(item => `
+          <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 space-y-1.5 text-xs">
+            <div class="flex justify-between text-[10px]">
+              <span class="bg-brand-950 text-brand-400 border border-brand-800 px-2 py-0.5 rounded-full font-bold">${item.Kategori || 'Umum'}</span>
+              <span class="text-slate-400">${formatDateIndo(item.Tanggal)}</span>
+            </div>
+            <h3 class="font-bold text-sm text-white">${item.Judul || 'Pengumuman'}</h3>
+            <p class="text-xs text-slate-300 leading-relaxed">${item.Isi_Pengumuman || item.Isi || ''}</p>
+          </div>
+        `).join('');
       } catch (err) {
-        alert('Gagal mengirim setoran mutaba\'ah.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Kirim Mutaba'ah Rumah ke Wali Kelas`;
+        container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-rose-400">Gagal mengambil pengumuman dari server.</div>`;
       }
     }
 
