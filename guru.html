@@ -296,7 +296,7 @@
 
   <script>
     // MASUKKAN URL GOOGLE APPS SCRIPT BAPAK LANGSUNG DI SINI
-    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwVmfmObDSAeEHPEoRIysEDZkl_1vZtfhgp8WCVADMnwJOmT8yMdnl07JmTqRDtyrq8UA/exec";
+    const DEFAULT_GAS_URL = "PRODUKSI_URL_GAS_DI_SINI";
     let GAS_URL = localStorage.getItem('SDIT_IQRA_GAS_URL') || DEFAULT_GAS_URL;
 
     const DUMMY_STUDENTS = [
@@ -304,6 +304,10 @@
       { id: "S002", nama: "Aisyah Nurul Rahma" },
       { id: "S003", nama: "Bilal Al-Ghifari" }
     ];
+
+    function isValidGasUrl(url) {
+      return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
+    }
 
     window.addEventListener('DOMContentLoaded', () => {
       initDates();
@@ -332,6 +336,7 @@
           btn.className = "py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold text-[11px] shadow transition-all";
           if(t === 'izin') fetchIzinGuru();
           if(t === 'pengumuman') fetchPengumumanGuru();
+          if(t === 'rekap') fetchRekapGuru();
         } else {
           sec.classList.add('hidden');
           btn.className = "py-2.5 rounded-xl text-slate-400 hover:text-slate-200 font-semibold text-[11px] transition-all";
@@ -394,8 +399,16 @@
 
     async function handlePostPengumuman(e) {
       e.preventDefault();
+      
+      if (!isValidGasUrl(GAS_URL)) {
+        alert('URL Google Apps Script belum disetting! Klik tombol ikon ⚙️ di pojok kanan atas untuk memasukkan Web App URL dari GAS.');
+        openConfigModal();
+        return;
+      }
+
       const btn = document.getElementById('btn-post-pengumuman');
-      btn.disabled = true; btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mempublikasikan...`;
+      btn.disabled = true; 
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mempublikasikan...`;
 
       const payload = {
         action: 'addPengumuman',
@@ -405,16 +418,6 @@
         isi: document.getElementById('p-isi').value
       };
 
-      if (!GAS_URL) {
-        setTimeout(() => {
-          alert('Pengumuman berhasil terpublikasi (Mode Demo / Local)!');
-          e.target.reset();
-          btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1.5"></i> Publikasikan Pengumuman`;
-          fetchPengumumanGuru();
-        }, 500);
-        return;
-      }
-
       try {
         await fetch(GAS_URL, {
           method: 'POST',
@@ -422,27 +425,26 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        alert('Pengumuman berhasil dikirim ke aplikasi orang tua!');
+        alert('Pengumuman berhasil terkirim ke Google Sheets & Aplikasi Orang Tua!');
         e.target.reset();
+        initDates();
         fetchPengumumanGuru();
       } catch (err) {
-        alert('Gagal mempublikasikan pengumuman.');
+        alert('Gagal mempublikasikan pengumuman. Periksa koneksi atau URL GAS.');
       } finally {
-        btn.disabled = false; btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1.5"></i> Publikasikan Pengumuman`;
+        btn.disabled = false; 
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1.5"></i> Publikasikan Pengumuman`;
       }
     }
 
     async function fetchPengumumanGuru() {
       const container = document.getElementById('guru-list-pengumuman');
-      if(!GAS_URL) {
+      
+      if (!isValidGasUrl(GAS_URL)) {
         container.innerHTML = `
-          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5 text-xs">
-            <div class="flex justify-between text-[10px]">
-              <span class="bg-brand-950 text-brand-400 border border-brand-800/80 px-2 py-0.5 rounded-full font-bold">Kegiatan</span>
-              <span class="text-slate-400">2026-11-06</span>
-            </div>
-            <h4 class="font-bold text-white text-sm">Outbound & Edukasi Alam</h4>
-            <p class="text-slate-300">Assalamu'alaikum, siapkan pakaian olah raga untuk anak-anak besok pagi.</p>
+          <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-1.5 text-xs text-center">
+            <p class="text-amber-400 font-bold mb-1">⚠️ URL GAS Belum Diatur</p>
+            <p class="text-slate-400 text-[11px]">Silakan masukkan URL Web App GAS via tombol ⚙️ Pengaturan di kanan atas.</p>
           </div>
         `;
         return;
@@ -475,23 +477,40 @@
       const container = document.getElementById('guru-list-izin');
       container.innerHTML = `<div class="text-center text-slate-500 py-6 text-xs"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat surat izin...</div>`;
 
-      if(!GAS_URL) {
-        container.innerHTML = `
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1 text-xs">
-            <div class="flex justify-between font-bold text-white border-b border-slate-800 pb-1.5">
-              <span>S001 • Ahmad Fauzi</span>
-              <span class="text-rose-400 bg-rose-950 border border-rose-800 px-2 py-0.5 rounded text-[10px]">🏥 Sakit</span>
-            </div>
-            <p class="text-slate-400 text-[11px] pt-1">📅 <b>Periode:</b> 2026-11-05 s.d 2026-11-06</p>
-            <p class="text-slate-300 text-[11px]">💬 <b>Alasan:</b> Demam tinggi dan butuh istirahat di rumah.</p>
-          </div>
-        `;
+      if (!isValidGasUrl(GAS_URL)) {
+        container.innerHTML = `<div class="text-center text-amber-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">⚠️ URL GAS Belum Diatur.</div>`;
         return;
       }
 
+      try {
+        const res = await fetch(`${GAS_URL}?action=getIzin&id_siswa=ALL`);
+        const json = await res.json();
+        if (!json.data || json.data.length === 0) {
+          container.innerHTML = `<div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800">Belum ada surat izin masuk.</div>`;
+          return;
+        }
+
+        container.innerHTML = json.data.map(iz => `
+          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-1 text-xs">
+            <div class="flex justify-between font-bold text-white border-b border-slate-800 pb-1.5">
+              <span>${iz.ID_Siswa || ''} • ${iz.Nama_Siswa || 'Siswa'}</span>
+              <span class="text-rose-400 bg-rose-950 border border-rose-800 px-2 py-0.5 rounded text-[10px]">${iz.Kategori || 'Izin'}</span>
+            </div>
+            <p class="text-slate-400 text-[11px] pt-1">📅 <b>Periode:</b> ${iz.Tgl_Mulai} s.d ${iz.Tgl_Selesai}</p>
+            <p class="text-slate-300 text-[11px]">💬 <b>Alasan:</b> ${iz.Alasan}</p>
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<div class="text-center text-rose-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">Gagal memuat surat izin.</div>`;
+      }
+    }
+
     async function fetchRekapGuru() {
       const container = document.getElementById('guru-list-rekap');
-      if(!GAS_URL) return;
+      if (!isValidGasUrl(GAS_URL)) {
+        container.innerHTML = `<div class="text-center text-amber-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">⚠️ URL GAS Belum Diatur.</div>`;
+        return;
+      }
 
       try {
         const res = await fetch(`${GAS_URL}?action=getMutabaah&id_siswa=ALL`);
@@ -501,7 +520,7 @@
           return;
         }
 
-        container.innerHTML = json.data.slice(0, 10).map(m => `
+        container.innerHTML = json.data.slice(0, 15).map(m => `
           <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
             <div class="flex justify-between font-bold text-white">
               <span>${m.ID_Siswa || ''}</span>
@@ -511,18 +530,106 @@
             <p class="text-slate-300 text-[11px]"><b>💬 Catatan:</b> ${m.Catatan_Guru}</p>
           </div>
         `).join('');
-      } catch(e) {}
+      } catch(e) {
+        container.innerHTML = `<div class="text-center text-rose-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">Gagal mengambil data rekap.</div>`;
+      }
     }
 
-    function submitMutabaahBulk() {
-      alert('Data mutaba\'ah masal kelas berhasil tersimpan!');
+    async function submitMutabaahBulk() {
+      if (!isValidGasUrl(GAS_URL)) {
+        alert('URL Google Apps Script belum diatur! Silakan atur terlebih dahulu.');
+        openConfigModal();
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit-bulk');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
+
+      const tgl = document.getElementById('bulk-tanggal').value;
+
+      try {
+        for (const s of DUMMY_STUDENTS) {
+          const payload = {
+            action: 'addMutabaah',
+            id_siswa: s.id,
+            tanggal: tgl,
+            dzuhur: document.getElementById(`bulk-dzuhur-${s.id}`).value,
+            adab: document.getElementById(`bulk-adab-${s.id}`).value,
+            tilawah: document.getElementById(`bulk-tilawah-${s.id}`).value || '-',
+            catatan: 'Input Masal Wali Kelas',
+            sumber: 'Sekolah'
+          };
+
+          await fetch(GAS_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        alert('Data mutaba\'ah masal berhasil dikirim ke Google Sheets!');
+      } catch (err) {
+        alert('Gagal menyimpan mutaba\'ah masal.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Mutaba'ah Masal Kelas`;
+      }
     }
 
-    function openConfigModal() { document.getElementById('input-gas-url').value = GAS_URL; document.getElementById('modal-config').classList.remove('hidden'); }
+    async function handlePostMutabaahSingle(e) {
+      e.preventDefault();
+      if (!isValidGasUrl(GAS_URL)) {
+        alert('URL Google Apps Script belum diatur! Silakan atur terlebih dahulu.');
+        openConfigModal();
+        return;
+      }
+
+      const btn = document.getElementById('btn-post-mutabaah');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
+
+      const payload = {
+        action: 'addMutabaah',
+        id_siswa: document.getElementById('m-siswa').value,
+        tanggal: document.getElementById('m-tanggal').value,
+        dzuhur: document.getElementById('m-dzuhur').value,
+        adab: document.getElementById('m-adab').value,
+        tilawah: document.getElementById('m-tilawah').value || '-',
+        catatan: document.getElementById('m-catatan').value || 'Catatan Guru',
+        sumber: 'Sekolah'
+      };
+
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        alert('Data mutaba\'ah berhasil tersimpan ke Google Sheets!');
+        e.target.reset();
+        initDates();
+      } catch (err) {
+        alert('Gagal menyimpan mutaba\'ah.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-save mr-1.5"></i> Simpan Rekam Siswa`;
+      }
+    }
+
+    function openConfigModal() { document.getElementById('input-gas-url').value = (GAS_URL === DEFAULT_GAS_URL ? '' : GAS_URL); document.getElementById('modal-config').classList.remove('hidden'); }
     function closeConfigModal() { document.getElementById('modal-config').classList.add('hidden'); }
     function saveGasUrl() {
       const v = document.getElementById('input-gas-url').value.trim();
-      if(v) { GAS_URL = v; localStorage.setItem('SDIT_IQRA_GAS_URL', v); closeConfigModal(); fetchPengumumanGuru(); }
+      if(v) { 
+        GAS_URL = v; 
+        localStorage.setItem('SDIT_IQRA_GAS_URL', v); 
+        closeConfigModal(); 
+        fetchPengumumanGuru(); 
+        alert('URL Apps Script berhasil disimpan!');
+      }
     }
   </script>
 </body>
