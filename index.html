@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Orang Tua - SD IT AL-IQRA</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
+          colors: { 
+            brand: { 50: '#ecfdf5', 100: '#d1fae5', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } 
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="min-h-full flex flex-col font-sans antialiased text-slate-100 bg-slate-950 selection:bg-brand-500 selection:text-white">
+
+  <!-- SCREEN 1: LOGIN PORTAL (DARK THEME) -->
+  <div id="screen-login" class="min-h-screen flex flex-col justify-center items-center p-4 bg-slate-950 text-white relative overflow-hidden">
+    <div class="absolute -top-12 -left-12 w-64 h-64 bg-brand-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="absolute -bottom-12 -right-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="max-w-sm w-full bg-slate-900 text-slate-100 p-6 sm:p-8 rounded-3xl shadow-2xl border border-slate-800 space-y-6 relative z-10">
+      <div class="text-center space-y-2">
+        <div class="w-20 h-20 mx-auto bg-gradient-to-tr from-brand-600 to-emerald-500 rounded-2xl p-0.5 shadow-md flex items-center justify-center">
+          <div class="w-full h-full bg-slate-900 rounded-[14px] p-2 flex items-center justify-center">
+            <img src="logo.png" alt="Logo SD IT AL-IQRA" class="w-full h-full object-contain filter drop-shadow-sm" onerror="this.src='https://placehold.co/100x100/059669/ffffff?text=IQRA';"/>
+          </div>
+        </div>
+        <div>
+          <h2 class="font-extrabold text-xl text-white tracking-tight">SD IT AL-IQRA</h2>
+          <p class="text-xs font-semibold text-brand-400 mt-0.5">Portal Mutaba'ah & Karakter Siswa</p>
+          <span class="inline-block px-3 py-0.5 mt-1 bg-slate-800 border border-slate-700 text-slate-300 text-[10px] font-bold rounded-full uppercase tracking-wider">Kelas IV</span>
+        </div>
+      </div>
+
+      <form onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">ID Siswa / NIS</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500"><i class="fa-solid fa-id-card text-xs"></i></span>
+            <input type="text" id="login-id" required placeholder="Contoh: S001" class="w-full pl-10 pr-3 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold uppercase text-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">PIN Orang Tua (4 Digit)</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-500"><i class="fa-solid fa-key text-xs"></i></span>
+            <input type="password" id="login-pin" maxlength="6" required placeholder="••••" class="w-full pl-10 pr-3 py-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-semibold tracking-widest text-white focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all">
+          </div>
+        </div>
+
+        <div id="login-error" class="hidden text-xs text-rose-400 bg-rose-950/80 border border-rose-800 p-3 rounded-xl text-center font-medium shadow-sm"></div>
+
+        <button type="submit" id="btn-login" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3.5 rounded-xl text-xs shadow-md transition-all active:scale-[0.98]">
+          <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Masuk Akun Siswa
+        </button>
+      </form>
+
+      <div class="text-center pt-3 border-t border-slate-800 text-[11px] text-slate-500 font-medium">
+        <span>Lupa PIN? Hubungi Wali Kelas IV</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 2: MAIN APP PORTAL (DARK THEME) -->
+  <div id="screen-app" class="hidden min-h-screen flex flex-col bg-slate-950">
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-md">
+      <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-500 p-0.5 shadow-md flex items-center justify-center">
+            <div class="w-full h-full bg-slate-900 rounded-[14px] p-1.5 flex items-center justify-center">
+              <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/059669/ffffff?text=IQRA';"/>
+            </div>
+          </div>
+          <div>
+            <h1 class="font-bold text-white leading-tight text-sm flex items-center gap-1.5" id="user-nama-siswa">
+              <span>Nama Ananda</span>
+            </h1>
+            <p class="text-[11px] text-brand-400 font-semibold" id="user-ortu-info">Orang Tua • Kelas IV</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-1.5">
+          <button onclick="handleLogout()" title="Keluar" class="text-rose-400 hover:bg-rose-950/80 px-2.5 py-1.5 rounded-xl border border-rose-800 text-xs font-semibold flex items-center gap-1 transition-colors">
+            <i class="fa-solid fa-power-off text-[10px]"></i> Keluar
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-16 space-y-4">
+      <!-- NAVIGASI TAB -->
+      <div class="grid grid-cols-3 gap-1 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold shadow-inner">
+        <button id="btn-tab-info" onclick="switchTab('info')" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white shadow-sm transition-all flex items-center justify-center gap-1">
+          <span>📢</span> Info
+        </button>
+        <button id="btn-tab-mutabaah" onclick="switchTab('mutabaah')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1">
+          <span>📖</span> Mutaba'ah
+        </button>
+        <button id="btn-tab-izin" onclick="switchTab('izin')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1">
+          <span>📬</span> Izin / Sakit
+        </button>
+      </div>
+
+      <!-- TAB 1: PENGUMUMAN -->
+      <section id="sec-info" class="space-y-3">
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-1 shadow-sm">
+          <h2 class="font-bold text-sm text-brand-400 flex items-center gap-2">
+            <i class="fa-solid fa-bullhorn text-brand-500"></i> Informasi Harian Kelas
+          </h2>
+          <p class="text-[11px] text-slate-400">Pengumuman & agenda kegiatan dari Wali Kelas IV</p>
+        </div>
+        <div id="list-pengumuman" class="space-y-3">
+          <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Memuat pengumuman...</div>
+        </div>
+      </section>
+
+      <!-- TAB 2: MUTABA'AH ANANDA -->
+      <section id="sec-mutabaah" class="hidden space-y-4">
+        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-0.5">STATUS MUTABA'AH ANANDA</span>
+            <h3 class="font-bold text-sm text-brand-400" id="card-nama-siswa">-</h3>
+          </div>
+          <button onclick="loadMutabaah()" class="text-xs text-brand-400 font-semibold bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-xl border border-slate-700 active:scale-95 transition-all">
+            <i class="fa-solid fa-rotate mr-1"></i> Refresh
+          </button>
+        </div>
+
+        <!-- FORM INPUT MUTABA'AH MANDIRI RUMAH (UNTUK ORTU) -->
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3.5 shadow-sm">
+          <div class="flex justify-between items-center border-b border-slate-800 pb-2.5">
+            <div>
+              <h3 class="font-bold text-sm text-emerald-400 flex items-center gap-1.5">
+                <i class="fa-solid fa-house-chimney-user"></i> Setor Mutaba'ah Rumah
+              </h3>
+              <p class="text-[11px] text-slate-400">Input ibadah ananda saat akhir pekan / libur</p>
+            </div>
+          </div>
+
+          <form onsubmit="handleSendMutabaahOrtu(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Tanggal</label>
+              <input type="date" id="ortu-m-tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white focus:ring-2 focus:ring-brand-500 outline-none">
+            </div>
+
+            <!-- CHECKLIST SHALAT 5 WAKTU -->
+            <div class="space-y-2 bg-slate-950 p-3 rounded-xl border border-slate-800">
+              <label class="block font-bold text-emerald-400 text-[11px] uppercase tracking-wider mb-1">Shalat Fardhu 5 Waktu:</label>
+              <div class="grid grid-cols-2 gap-2 text-[11px]">
+                <div>
+                  <span class="text-slate-300 block mb-0.5">Subuh</span>
+                  <select id="ortu-m-subuh" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+                    <option value="Berjamaah">🕌 Berjamaah</option>
+                    <option value="Munfarid">👤 Munfarid</option>
+                    <option value="Tidak">❌ Tidak Shalat</option>
+                  </select>
+                </div>
+                <div>
+                  <span class="text-slate-300 block mb-0.5">Dzuhur</span>
+                  <select id="ortu-m-dzuhur" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+                    <option value="Berjamaah">🕌 Berjamaah</option>
+                    <option value="Munfarid">👤 Munfarid</option>
+                    <option value="Tidak">❌ Tidak Shalat</option>
+                  </select>
+                </div>
+                <div>
+                  <span class="text-slate-300 block mb-0.5">Ashar</span>
+                  <select id="ortu-m-ashar" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+                    <option value="Berjamaah">🕌 Berjamaah</option>
+                    <option value="Munfarid">👤 Munfarid</option>
+                    <option value="Tidak">❌ Tidak Shalat</option>
+                  </select>
+                </div>
+                <div>
+                  <span class="text-slate-300 block mb-0.5">Maghrib</span>
+                  <select id="ortu-m-maghrib" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+                    <option value="Berjamaah">🕌 Berjamaah</option>
+                    <option value="Munfarid">👤 Munfarid</option>
+                    <option value="Tidak">❌ Tidak Shalat</option>
+                  </select>
+                </div>
+                <div class="col-span-2">
+                  <span class="text-slate-300 block mb-0.5">Isya</span>
+                  <select id="ortu-m-isya" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+                    <option value="Berjamaah">🕌 Berjamaah</option>
+                    <option value="Munfarid">👤 Munfarid</option>
+                    <option value="Tidak">❌ Tidak Shalat</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- SUNNAH & TILAWAH -->
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-semibold text-slate-300 mb-1">Shalat Dhuha</label>
+                <select id="ortu-m-dhuha" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white">
+                  <option value="Ya">✅ Ya (Dilaksanakan)</option>
+                  <option value="Tidak">❌ Tidak</option>
+                </select>
+              </div>
+              <div>
+                <label class="block font-semibold text-slate-300 mb-1">Adab & Mandiri</label>
+                <select id="ortu-m-adab" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white">
+                  <option value="Sangat Baik">🌟 Sangat Baik</option>
+                  <option value="Baik">👍 Baik & Penurut</option>
+                  <option value="Perlu Bimbingan">⚠️ Perlu Bimbingan</option>
+                </select>
+              </div>
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Tilawah / Muraja'ah Rumah</label>
+              <input type="text" id="ortu-m-tilawah" placeholder="Contoh: Surah Al-Mulk 1-10 & Zikir Pagi" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-600">
+            </div>
+
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Catatan Orang Tua (Opsional)</label>
+              <textarea id="ortu-m-catatan" rows="2" placeholder="Tuliskan perkembangan karakter anak di rumah..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-600"></textarea>
+            </div>
+
+            <button type="submit" id="btn-submit-ortu-m" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
+              <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Kirim Mutaba'ah Rumah ke Wali Kelas
+            </button>
+          </form>
+        </div>
+
+        <div id="list-mutabaah" class="space-y-3">
+          <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Memuat catatan mutaba'ah...</div>
+        </div>
+      </section>
+
+      <!-- TAB 3: FORM IZIN / SAKIT -->
+      <section id="sec-izin" class="hidden space-y-4">
+        <div class="bg-slate-900 p-4 sm:p-5 rounded-2xl shadow-sm border border-slate-800 space-y-4">
+          <div class="border-b border-slate-800 pb-2.5">
+            <h3 class="font-bold text-sm text-brand-400 flex items-center gap-1.5"><i class="fa-solid fa-paper-plane"></i> Form Surat Izin / Sakit</h3>
+            <p class="text-[11px] text-slate-400">Kirim pemberitahuan izin ketidakhadiran ananda ke Wali Kelas</p>
+          </div>
+
+          <form onsubmit="handleSendIzin(event)" class="space-y-3 text-xs">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Kategori Izin</label>
+              <select id="izin-kategori" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 font-semibold text-white focus:ring-2 focus:ring-brand-500 outline-none">
+                <option value="Sakit">🏥 Sakit</option>
+                <option value="Izin">🏡 Izin / Acara Keluarga</option>
+                <option value="Lainnya">📝 Lainnya</option>
+              </select>
+            </div>
+            <div class="grid grid-cols-2 gap-2">
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Tanggal Mulai</label>
+                <input type="date" id="izin-tgl-mulai" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 font-medium text-white focus:ring-2 focus:ring-brand-500 outline-none">
+              </div>
+              <div>
+                <label class="block font-bold text-slate-300 mb-1">Sampai Tanggal</label>
+                <input type="date" id="izin-tgl-selesai" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 font-medium text-white focus:ring-2 focus:ring-brand-500 outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1">Alasan / Keterangan</label>
+              <textarea id="izin-alasan" rows="3" required placeholder="Contoh: Ananda demam tinggi sejak semalam..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white placeholder-slate-600 focus:ring-2 focus:ring-brand-500 outline-none"></textarea>
+            </div>
+            <button type="submit" id="btn-submit-izin" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
+              <i class="fa-solid fa-paper-plane mr-1"></i> Kirim Surat Izin
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // MASUKKAN URL GOOGLE APPS SCRIPT BAPAK LANGSUNG DI SINI
+    const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwVmfmObDSAeEHPEoRIysEDZkl_1vZtfhgp8WCVADMnwJOmT8yMdnl07JmTqRDtyrq8UA/exec";
+    let GAS_URL = localStorage.getItem('SDIT_IQRA_GAS_URL') || DEFAULT_GAS_URL;
+
+    let CURRENT_USER = JSON.parse(localStorage.getItem('SDIT_IQRA_USER') || "null");
+
+    const DUMMY_USERS = {
+      "S001": { id: "S001", pin: "1234", nama: "Ahmad Fauzi", ortu: "Bapak Budi" },
+      "S002": { id: "S002", pin: "5678", nama: "Aisyah Nurul Rahma", ortu: "Ibu Siti" },
+      "S003": { id: "S003", pin: "1122", nama: "Bilal Al-Ghifari", ortu: "Bapak Ahmad" }
+    };
+
+    window.addEventListener('DOMContentLoaded', () => {
+      if(CURRENT_USER) showAppScreen(); else showLoginScreen();
+    });
+
+    function showLoginScreen() {
+      document.getElementById('screen-login').classList.remove('hidden');
+      document.getElementById('screen-app').classList.add('hidden');
+    }
+
+    function showAppScreen() {
+      document.getElementById('screen-login').classList.add('hidden');
+      document.getElementById('screen-app').classList.remove('hidden');
+      document.getElementById('user-nama-siswa').innerText = CURRENT_USER.nama;
+      document.getElementById('user-ortu-info').innerText = `${CURRENT_USER.ortu || 'Orang Tua'} • Kelas IV`;
+      document.getElementById('card-nama-siswa').innerText = CURRENT_USER.nama;
+      
+      const tglMulai = document.getElementById('izin-tgl-mulai');
+      const tglSelesai = document.getElementById('izin-tgl-selesai');
+      const tglOrtuM = document.getElementById('ortu-m-tanggal');
+      
+      // Safety check agar tidak crash jika elemen belum ter-render di DOM
+      if (tglMulai) tglMulai.valueAsDate = new Date();
+      if (tglSelesai) tglSelesai.valueAsDate = new Date();
+      if (tglOrtuM) tglOrtuM.valueAsDate = new Date();
+
+      loadPengumuman();
+      loadMutabaah();
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const idInput = document.getElementById('login-id').value.trim().toUpperCase();
+      const pinInput = document.getElementById('login-pin').value.trim();
+      const errBox = document.getElementById('login-error');
+
+      if (DUMMY_USERS[idInput] && DUMMY_USERS[idInput].pin === pinInput) {
+        CURRENT_USER = DUMMY_USERS[idInput];
+        localStorage.setItem('SDIT_IQRA_USER', JSON.stringify(CURRENT_USER));
+        showAppScreen();
+      } else {
+        errBox.innerText = "ID Siswa atau PIN salah. (Default DUMMY: S001 / PIN: 1234)";
+        errBox.classList.remove('hidden');
+      }
+    }
+
+    function handleLogout() {
+      // Menghapus penyimpanan lokal sesi akun tanpa menggunakan confirm()
+      localStorage.removeItem('SDIT_IQRA_USER');
+      CURRENT_USER = null;
+      showLoginScreen();
+    }
+
+    function switchTab(t) {
+      const tabs = ['info', 'mutabaah', 'izin'];
+      tabs.forEach(tab => {
+        const sec = document.getElementById(`sec-${tab}`);
+        const btn = document.getElementById(`btn-tab-${tab}`);
+        if(tab === t) {
+          sec.classList.remove('hidden');
+          btn.className = "py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white shadow-sm font-semibold";
+        } else {
+          sec.classList.add('hidden');
+          btn.className = "py-2.5 rounded-xl text-slate-400 font-medium hover:text-slate-200";
+        }
+      });
+    }
+
+    function loadPengumuman() {
+      document.getElementById('list-pengumuman').innerHTML = `
+        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 space-y-1.5 text-xs">
+          <div class="flex justify-between text-[10px]">
+            <span class="bg-brand-950 text-brand-400 border border-brand-800 px-2 py-0.5 rounded-full font-bold">Kegiatan</span>
+            <span class="text-slate-400">2026-11-06</span>
+          </div>
+          <h3 class="font-bold text-sm text-white">Kegiatan Outbound Edukasi</h3>
+          <p class="text-xs text-slate-300 leading-relaxed">Assalamu'alaikum, mohon persiapkan baju olahraga anak-anak untuk esok hari.</p>
+        </div>
+      `;
+    }
+
+    function loadMutabaah() {
+      document.getElementById('list-mutabaah').innerHTML = `
+        <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 space-y-2 text-xs">
+          <div class="flex justify-between border-b border-slate-800 pb-1.5 font-bold">
+            <span class="text-white flex items-center gap-1.5">📅 2026-11-05 <span class="bg-emerald-950 text-emerald-400 text-[9px] px-2 py-0.5 rounded border border-emerald-800">Rumah</span></span>
+            <span class="text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-full text-[10px]">Sangat Baik</span>
+          </div>
+          <div class="grid grid-cols-5 text-center text-[10px] bg-slate-950 p-2 rounded-xl text-slate-300 gap-1 border border-slate-800/80">
+            <div>Subuh<br><b class="text-emerald-400">Berjamaah</b></div>
+            <div>Dzuhur<br><b class="text-emerald-400">Berjamaah</b></div>
+            <div>Ashar<br><b class="text-emerald-400">Berjamaah</b></div>
+            <div>Maghrib<br><b class="text-emerald-400">Berjamaah</b></div>
+            <div>Isya<br><b class="text-amber-400">Munfarid</b></div>
+          </div>
+          <p class="text-slate-300">📖 <b>Tilawah:</b> An-Naba: 1-15 & Surah Al-Mulk</p>
+          <p class="text-slate-300">💬 <b>Catatan Ortu:</b> Ananda melaksana shalat tepat waktu saat libur.</p>
+        </div>
+      `;
+    }
+
+    async function handleSendMutabaahOrtu(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-ortu-m');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Mengirim Setoran...`;
+
+      const payload = {
+        action: 'addMutabaah',
+        id_siswa: CURRENT_USER.id,
+        nama_siswa: CURRENT_USER.nama,
+        tanggal: document.getElementById('ortu-m-tanggal').value,
+        subuh: document.getElementById('ortu-m-subuh').value,
+        dzuhur: document.getElementById('ortu-m-dzuhur').value,
+        ashar: document.getElementById('ortu-m-ashar').value,
+        maghrib: document.getElementById('ortu-m-maghrib').value,
+        isya: document.getElementById('ortu-m-isya').value,
+        tilawah: document.getElementById('ortu-m-tilawah').value || 'Selesai Tilawah',
+        adab: document.getElementById('ortu-m-adab').value,
+        catatan: (document.getElementById('ortu-m-catatan').value || 'Setoran dari Rumah') + " [Dhuha: " + document.getElementById('ortu-m-dhuha').value + "]",
+        sumber: 'Rumah (Ortu)'
+      };
+
+      if (!GAS_URL) {
+        setTimeout(() => {
+          alert('Setoran mutaba\'ah rumah berhasil terkirim ke Wali Kelas (Mode Demo)!');
+          e.target.reset();
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Kirim Mutaba'ah Rumah ke Wali Kelas`;
+          loadMutabaah();
+        }, 500);
+        return;
+      }
+
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        alert('Setoran mutaba\'ah rumah berhasil terkirim!');
+        e.target.reset();
+        loadMutabaah();
+      } catch (err) {
+        alert('Gagal mengirim setoran mutaba\'ah.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Kirim Mutaba'ah Rumah ke Wali Kelas`;
+      }
+    }
+
+    async function handleSendIzin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-submit-izin');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Mengirim Izin...`;
+
+      const payload = {
+        action: 'addIzin',
+        id_siswa: CURRENT_USER.id,
+        nama_siswa: CURRENT_USER.nama,
+        kategori: document.getElementById('izin-kategori').value,
+        tgl_mulai: document.getElementById('izin-tgl-mulai').value,
+        tgl_selesai: document.getElementById('izin-tgl-selesai').value,
+        alasan: document.getElementById('izin-alasan').value
+      };
+
+      if (!GAS_URL) {
+        setTimeout(() => {
+          alert('Surat izin terkirim ke Wali Kelas (Mode Demo)!');
+          e.target.reset();
+          btn.disabled = false;
+          btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Surat Izin`;
+        }, 500);
+        return;
+      }
+
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        alert('Surat izin berhasil terkirim ke Wali Kelas!');
+        e.target.reset();
+      } catch (err) {
+        alert('Gagal mengirim surat izin.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Surat Izin`;
+      }
+    }
+  </script>
+</body>
+</html>
