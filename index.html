@@ -98,15 +98,18 @@
 
     <main class="flex-1 max-w-md w-full mx-auto p-4 pb-16 space-y-4">
       <!-- NAVIGASI TAB -->
-      <div class="grid grid-cols-3 gap-1 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold shadow-inner">
+      <div class="grid grid-cols-4 gap-1 bg-slate-900 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold shadow-inner">
         <button id="btn-tab-info" onclick="switchTab('info')" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white shadow-sm transition-all flex items-center justify-center gap-1">
           <span>📢</span> Info
+        </button>
+        <button id="btn-tab-materi" onclick="switchTab('materi')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1">
+          <span>📚</span> Materi
         </button>
         <button id="btn-tab-mutabaah" onclick="switchTab('mutabaah')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1">
           <span>📖</span> Mutaba'ah
         </button>
         <button id="btn-tab-izin" onclick="switchTab('izin')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 transition-all flex items-center justify-center gap-1">
-          <span>📬</span> Izin / Sakit
+          <span>📬</span> Izin
         </button>
       </div>
 
@@ -120,6 +123,41 @@
         </div>
         <div id="list-pengumuman" class="space-y-3">
           <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Memuat pengumuman...</div>
+        </div>
+      </section>
+
+      <!-- TAB BARU: MATERI PEMBELAJARAN & VIDEO SISWA -->
+      <section id="sec-materi" class="hidden space-y-3">
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-2 shadow-sm">
+          <div class="flex justify-between items-center">
+            <h2 class="font-bold text-sm text-brand-400 flex items-center gap-2">
+              <i class="fa-solid fa-graduation-cap text-brand-500"></i> Video Pembelajaran Siswa
+            </h2>
+            <button onclick="loadMateri('ALL')" class="text-xs text-brand-400 font-semibold">
+              <i class="fa-solid fa-rotate mr-1"></i> Refresh
+            </button>
+          </div>
+          <p class="text-[11px] text-slate-400">Materi dan video suplemen belajar ananda di rumah</p>
+
+          <!-- FILTER MATA PELAJARAN -->
+          <div class="pt-2 border-t border-slate-800">
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Filter Mata Pelajaran:</label>
+            <select id="filter-mapel" onchange="loadMateri(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:ring-2 focus:ring-brand-500 outline-none">
+              <option value="ALL">🌟 Semua Mata Pelajaran</option>
+              <option value="Matematika">🔢 Matematika</option>
+              <option value="IPAS">🌿 IPAS (IPA & IPS)</option>
+              <option value="PAI & BQ">📖 PAI & Al-Qur'an</option>
+              <option value="Bahasa Indonesia">🇮🇩 Bahasa Indonesia</option>
+              <option value="Bahasa Inggris">🇬🇧 Bahasa Inggris</option>
+              <option value="Pancasila">🦅 Pendidikan Pancasila</option>
+              <option value="Seni & SBdP">🎨 Seni & SBdP</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- LIST CONTAINER VIDEO MATERI -->
+        <div id="list-materi" class="space-y-3">
+          <div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Memuat materi pembelajaran...</div>
         </div>
       </section>
 
@@ -405,7 +443,7 @@
     }
 
     function switchTab(t) {
-      const tabs = ['info', 'mutabaah', 'izin'];
+      const tabs = ['info', 'materi', 'mutabaah', 'izin'];
       tabs.forEach(tab => {
         const sec = document.getElementById(`sec-${tab}`);
         const btn = document.getElementById(`btn-tab-${tab}`);
@@ -413,6 +451,7 @@
           sec.classList.remove('hidden');
           btn.className = "py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white shadow-sm font-semibold";
           if(t === 'info') loadPengumuman();
+          if(t === 'materi') loadMateri('ALL');
           if(t === 'mutabaah') loadMutabaah();
         } else {
           sec.classList.add('hidden');
@@ -421,13 +460,84 @@
       });
     }
 
-    async function loadPengumuman() {
-      const container = document.getElementById('list-pengumuman');
+    // Helper Ekstraksi Embed ID YouTube
+    function getYouTubeEmbedUrl(url) {
+      if (!url) return null;
+      let videoId = null;
+      if (url.includes('youtu.be/')) {
+        videoId = url.split('youtu.be/')[1].split('?')[0];
+      } else if (url.includes('youtube.com/watch')) {
+        const urlParams = new URLSearchParams(url.split('?')[1]);
+        videoId = urlParams.get('v');
+      }
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+
+    async function loadMateri(mapelFilter) {
+      const container = document.getElementById('list-materi');
       
       if (!isValidGasUrl(GAS_URL)) {
         container.innerHTML = `
-          <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 text-center text-xs text-amber-400">
-            ⚠️ Pengumuman Demo: Mohon atur URL GAS terlebih dahulu.
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-center text-xs text-amber-400">
+            ⚠️ Mode Demo: Mohon atur URL GAS untuk memuat video materi dari guru.
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat daftar video materi...</div>`;
+
+      try {
+        const urlParam = mapelFilter && mapelFilter !== 'ALL' ? `&mapel=${encodeURIComponent(mapelFilter)}` : '';
+        const res = await fetch(`${GAS_URL}?action=getMateri${urlParam}`);
+        const json = await res.json();
+        
+        if (!json.data || json.data.length === 0) {
+          container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Belum ada materi video untuk mata pelajaran ini.</div>`;
+          return;
+        }
+
+        container.innerHTML = json.data.map(item => {
+          const embedUrl = getYouTubeEmbedUrl(item.Url_Video);
+          return `
+            <div class="bg-slate-900 rounded-2xl shadow-sm border border-slate-800 overflow-hidden space-y-2 text-xs">
+              ${embedUrl ? `
+                <div class="aspect-video w-full bg-slate-950">
+                  <iframe class="w-full h-full" src="${embedUrl}" title="${item.Judul}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              ` : `
+                <div class="p-4 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between">
+                  <span class="text-rose-400 text-[11px] font-semibold"><i class="fa-solid fa-video mr-1"></i> Tautan Luar</span>
+                  <a href="${item.Url_Video}" target="_blank" class="px-3 py-1 bg-brand-600 hover:bg-brand-500 text-white font-bold rounded-lg text-[10px]">Buka Link Video</a>
+                </div>
+              `}
+              <div class="p-4 space-y-2">
+                <div class="flex justify-between items-center text-[10px]">
+                  <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2.5 py-0.5 rounded-full font-bold">${item.Mapel || 'Umum'}</span>
+                  <span class="text-slate-400">${formatDateIndo(item.Tanggal)}</span>
+                </div>
+                <h3 class="font-bold text-sm text-white">${item.Judul}</h3>
+                <p class="text-slate-300 leading-relaxed text-[11px]">${item.Deskripsi || ''}</p>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-rose-400">Gagal mengambil materi pembelajaran.</div>`;
+      }
+    }
+
+    // FUNGSI LOAD PENGUMUMAN (FIX MISSING FUNCTION)
+    async function loadPengumuman() {
+      const container = document.getElementById('list-pengumuman');
+      if (!container) return;
+
+      if (!isValidGasUrl(GAS_URL)) {
+        container.innerHTML = `
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 text-slate-300 text-xs space-y-2">
+            <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-2 py-0.5 rounded-md font-bold">Penting</span>
+            <h3 class="font-bold text-white text-sm">Selamat Datang di Portal Kelas IV</h3>
+            <p class="text-slate-400">Silakan hubungi Wali Kelas jika ada kendala dalam akses sistem.</p>
           </div>
         `;
         return;
@@ -438,32 +548,131 @@
       try {
         const res = await fetch(`${GAS_URL}?action=getPengumuman`);
         const json = await res.json();
-        
+
         if (!json.data || json.data.length === 0) {
           container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Belum ada pengumuman dari Wali Kelas.</div>`;
           return;
         }
 
         container.innerHTML = json.data.map(item => `
-          <div class="bg-slate-900 p-4 rounded-2xl shadow-sm border border-slate-800 space-y-1.5 text-xs">
-            <div class="flex justify-between text-[10px]">
-              <span class="bg-brand-950 text-brand-400 border border-brand-800 px-2 py-0.5 rounded-full font-bold">${item.Kategori || 'Umum'}</span>
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+            <div class="flex justify-between items-center text-[10px]">
+              <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded-md font-bold">${item.Kategori || 'Penting'}</span>
               <span class="text-slate-400">${formatDateIndo(item.Tanggal)}</span>
             </div>
-            <h3 class="font-bold text-sm text-white">${item.Judul || 'Pengumuman'}</h3>
-            <p class="text-xs text-slate-300 leading-relaxed">${item.Isi_Pengumuman || item.Isi || ''}</p>
+            <h3 class="font-bold text-white text-sm">${item.Judul}</h3>
+            <p class="text-slate-300 leading-relaxed text-[11px] whitespace-pre-line">${item.Isi_Pengumuman || item.Isi || ''}</p>
           </div>
         `).join('');
       } catch (err) {
-        container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-rose-400">Gagal mengambil pengumuman dari server.</div>`;
+        container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-rose-400">Gagal memuat pengumuman.</div>`;
       }
     }
 
+    // FUNGSI LOAD MUTABA'AH SISWA (FIX MISSING FUNCTION)
+    async function loadMutabaah() {
+      const container = document.getElementById('list-mutabaah');
+      if (!container || !CURRENT_USER) return;
+
+      if (!isValidGasUrl(GAS_URL)) {
+        container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Mode Demo: Atur URL GAS untuk melihat rekap mutaba'ah real-time.</div>`;
+        return;
+      }
+
+      container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Memuat catatan mutaba'ah...</div>`;
+
+      try {
+        const res = await fetch(`${GAS_URL}?action=getMutabaah&id_siswa=${encodeURIComponent(CURRENT_USER.id)}`);
+        const json = await res.json();
+
+        if (!json.data || json.data.length === 0) {
+          container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-slate-500">Belum ada riwayat mutaba'ah tercatat.</div>`;
+          return;
+        }
+
+        container.innerHTML = json.data.map(m => `
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <span class="font-bold text-brand-400">${formatDateIndo(m.Tanggal)}</span>
+              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${m.Sumber === 'Sekolah' ? 'bg-blue-950 text-blue-400 border border-blue-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">
+                ${m.Sumber || 'Sekolah'}
+              </span>
+            </div>
+            <div class="grid grid-cols-2 gap-1.5 text-[11px] text-slate-300">
+              <div>Subuh: <span class="font-semibold text-white">${m.Subuh}</span></div>
+              <div>Dzuhur: <span class="font-semibold text-white">${m.Dzuhur}</span></div>
+              <div>Ashar: <span class="font-semibold text-white">${m.Ashar}</span></div>
+              <div>Maghrib: <span class="font-semibold text-white">${m.Maghrib}</span></div>
+              <div class="col-span-2">Isya: <span class="font-semibold text-white">${m.Isya}</span></div>
+            </div>
+            ${m.Tilawah_Surah || m.Tilawah ? `<div class="pt-1 text-[11px] text-slate-300">📖 <b>Tilawah:</b> ${m.Tilawah_Surah || m.Tilawah}</div>` : ''}
+            ${m.Catatan_Guru || m.Catatan ? `<div class="p-2 bg-slate-950 rounded-xl text-[11px] text-slate-400 border border-slate-800">💬 <b>Catatan:</b> ${m.Catatan_Guru || m.Catatan}</div>` : ''}
+          </div>
+        `).join('');
+      } catch (err) {
+        container.innerHTML = `<div class="p-6 bg-slate-900 rounded-2xl border border-slate-800 text-center text-xs text-rose-400">Gagal memuat catatan mutaba'ah.</div>`;
+      }
+    }
+
+    // FUNGSI KIRIM MUTABA'AH RUMAH (FIX MISSING FUNCTION)
+    async function handleSendMutabaahOrtu(e) {
+      e.preventDefault();
+      if (!isValidGasUrl(GAS_URL)) {
+        alert('URL Google Apps Script belum dikonfigurasi!');
+        return;
+      }
+
+      const btn = document.getElementById('btn-submit-ortu-m');
+      btn.disabled = true;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengirim...`;
+
+      const payload = {
+        action: 'addMutabaah',
+        id_siswa: CURRENT_USER.id,
+        tanggal: document.getElementById('ortu-m-tanggal').value,
+        subuh: document.getElementById('ortu-m-subuh').value,
+        dzuhur: document.getElementById('ortu-m-dzuhur').value,
+        ashar: document.getElementById('ortu-m-ashar').value,
+        maghrib: document.getElementById('ortu-m-maghrib').value,
+        isya: document.getElementById('ortu-m-isya').value,
+        dhuha: document.getElementById('ortu-m-dhuha').value,
+        adab: document.getElementById('ortu-m-adab').value,
+        tilawah: document.getElementById('ortu-m-tilawah').value,
+        catatan: document.getElementById('ortu-m-catatan').value,
+        sumber: 'Rumah (Ortu)'
+      };
+
+      try {
+        await fetch(GAS_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        alert('Setoran mutaba\'ah rumah berhasil dikirim ke Wali Kelas!');
+        e.target.reset();
+        const tglOrtuM = document.getElementById('ortu-m-tanggal');
+        if (tglOrtuM) tglOrtuM.value = getTodayIso();
+        loadMutabaah();
+      } catch (err) {
+        alert('Gagal mengirim mutaba\'ah rumah.');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Kirim Mutaba'ah Rumah ke Wali Kelas`;
+      }
+    }
+
+    // FUNGSI KIRIM SURAT IZIN (FIX MISSING FUNCTION)
     async function handleSendIzin(e) {
       e.preventDefault();
+      if (!isValidGasUrl(GAS_URL)) {
+        alert('URL Google Apps Script belum dikonfigurasi!');
+        return;
+      }
+
       const btn = document.getElementById('btn-submit-izin');
       btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Mengirim Izin...`;
+      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengirim...`;
 
       const payload = {
         action: 'addIzin',
@@ -475,16 +684,6 @@
         alasan: document.getElementById('izin-alasan').value
       };
 
-      if (!GAS_URL) {
-        setTimeout(() => {
-          alert('Surat izin terkirim ke Wali Kelas (Mode Demo)!');
-          e.target.reset();
-          btn.disabled = false;
-          btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1"></i> Kirim Surat Izin`;
-        }, 500);
-        return;
-      }
-
       try {
         await fetch(GAS_URL, {
           method: 'POST',
@@ -492,8 +691,13 @@
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        alert('Surat izin berhasil terkirim ke Wali Kelas!');
+        alert('Surat izin berhasil dikirim ke Wali Kelas!');
         e.target.reset();
+        const todayStr = getTodayIso();
+        const tglMulai = document.getElementById('izin-tgl-mulai');
+        const tglSelesai = document.getElementById('izin-tgl-selesai');
+        if (tglMulai) tglMulai.value = todayStr;
+        if (tglSelesai) tglSelesai.value = todayStr;
       } catch (err) {
         alert('Gagal mengirim surat izin.');
       } finally {
