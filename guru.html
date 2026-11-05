@@ -189,9 +189,14 @@
 
       <!-- FORM BULK INPUT (MASAL SATU KELAS) -->
       <div id="form-bulk-mutabaah" class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3.5 shadow-sm text-xs">
-        <div class="border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-sm text-brand-400">Pencatatan Masal Harian Kelas IV</h3>
-          <p class="text-[11px] text-slate-400">Default: Seluruh siswa shalat Dzuhur berjamaah & beradab baik</p>
+        <div class="border-b border-slate-800 pb-2 flex justify-between items-center">
+          <div>
+            <h3 class="font-bold text-sm text-brand-400">Pencatatan Masal Harian Kelas IV</h3>
+            <p class="text-[11px] text-slate-400">Default: Seluruh siswa shalat Dzuhur berjamaah & beradab baik</p>
+          </div>
+          <button onclick="fetchSiswaGuru()" class="text-[11px] text-brand-400 font-semibold">
+            <i class="fa-solid fa-rotate mr-1"></i> Refresh Siswa
+          </button>
         </div>
 
         <div>
@@ -199,72 +204,9 @@
           <input type="date" id="bulk-tanggal" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
         </div>
 
-        <div class="space-y-3 pt-2">
-          <!-- SISWA 1 -->
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-white">S001 - Ahmad Fauzi</span>
-              <span class="text-[10px] text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-md">Hadir</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <div>
-                <span class="text-slate-400 block mb-0.5">Shalat Dzuhur</span>
-                <select id="bulk-dzuhur-S001" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-                  <option value="Berjamaah">🕌 Berjamaah</option>
-                  <option value="Munfarid">👤 Munfarid</option>
-                  <option value="Tidak">❌ Tidak Shalat</option>
-                </select>
-              </div>
-              <div>
-                <span class="text-slate-400 block mb-0.5">Tilawah & Hafalan</span>
-                <input type="text" id="bulk-tilawah-S001" placeholder="An-Naba 1-10" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-              </div>
-            </div>
-          </div>
-
-          <!-- SISWA 2 -->
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-white">S002 - Aisyah Nurul Rahma</span>
-              <span class="text-[10px] text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-md">Hadir</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <div>
-                <span class="text-slate-400 block mb-0.5">Shalat Dzuhur</span>
-                <select id="bulk-dzuhur-S002" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-                  <option value="Berjamaah">🕌 Berjamaah</option>
-                  <option value="Munfarid">👤 Munfarid</option>
-                  <option value="Tidak">❌ Tidak Shalat</option>
-                </select>
-              </div>
-              <div>
-                <span class="text-slate-400 block mb-0.5">Tilawah & Hafalan</span>
-                <input type="text" id="bulk-tilawah-S002" placeholder="An-Nazi'at 1-15" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-              </div>
-            </div>
-          </div>
-
-          <!-- SISWA 3 -->
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-white">S003 - Bilal Al-Ghifari</span>
-              <span class="text-[10px] text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-md">Hadir</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <div>
-                <span class="text-slate-400 block mb-0.5">Shalat Dzuhur</span>
-                <select id="bulk-dzuhur-S003" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-                  <option value="Berjamaah">🕌 Berjamaah</option>
-                  <option value="Munfarid">👤 Munfarid</option>
-                  <option value="Tidak">❌ Tidak Shalat</option>
-                </select>
-              </div>
-              <div>
-                <span class="text-slate-400 block mb-0.5">Tilawah & Hafalan</span>
-                <input type="text" id="bulk-tilawah-S003" placeholder="Abasa 1-20" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-              </div>
-            </div>
-          </div>
+        <!-- LIST CONTAINER DINAMIS SISWA BULK -->
+        <div id="bulk-siswa-container" class="space-y-3 pt-2">
+          <div class="text-center text-slate-500 py-4">Memuat daftar siswa...</div>
         </div>
 
         <button onclick="submitMutabaahBulk()" id="btn-submit-bulk" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
@@ -279,9 +221,7 @@
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Pilih Siswa</label>
             <select id="m-siswa" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-              <option value="S001">S001 - Ahmad Fauzi</option>
-              <option value="S002">S002 - Aisyah Nurul Rahma</option>
-              <option value="S003">S003 - Bilal Al-Ghifari</option>
+              <option value="">-- Pilih Siswa --</option>
             </select>
           </div>
           <div>
@@ -350,29 +290,14 @@
 
       <!-- BUKU KONTAK LOGIN ORTU -->
       <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-sm text-xs">
-        <h3 class="font-bold text-sm text-slate-200 border-b border-slate-800 pb-2">Daftar ID & PIN Login Orang Tua</h3>
-        <div class="space-y-2">
-          <div class="flex justify-between items-center p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-            <div>
-              <p class="font-bold text-white">S001 - Ahmad Fauzi</p>
-              <p class="text-[10px] text-slate-500">Ortu: Bapak Budi</p>
-            </div>
-            <span class="px-2.5 py-1 bg-slate-900 border border-slate-800 font-mono font-bold text-emerald-400 rounded-lg">PIN: 1234</span>
-          </div>
-          <div class="flex justify-between items-center p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-            <div>
-              <p class="font-bold text-white">S002 - Aisyah Nurul Rahma</p>
-              <p class="text-[10px] text-slate-500">Ortu: Ibu Siti</p>
-            </div>
-            <span class="px-2.5 py-1 bg-slate-900 border border-slate-800 font-mono font-bold text-emerald-400 rounded-lg">PIN: 5678</span>
-          </div>
-          <div class="flex justify-between items-center p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-            <div>
-              <p class="font-bold text-white">S003 - Bilal Al-Ghifari</p>
-              <p class="text-[10px] text-slate-500">Ortu: Bapak Ahmad</p>
-            </div>
-            <span class="px-2.5 py-1 bg-slate-900 border border-slate-800 font-mono font-bold text-emerald-400 rounded-lg">PIN: 1122</span>
-          </div>
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+          <h3 class="font-bold text-sm text-slate-200">Daftar ID & PIN Login Orang Tua</h3>
+          <button onclick="fetchSiswaGuru()" class="text-[11px] text-brand-400 font-semibold">
+            <i class="fa-solid fa-rotate mr-1"></i> Refresh
+          </button>
+        </div>
+        <div id="guru-list-siswa-pin" class="space-y-2">
+          <div class="text-center text-slate-500 py-2">Memuat akun siswa...</div>
         </div>
       </div>
     </section>
@@ -403,6 +328,7 @@
     // KONFIGURASI URL GAS UTAMA
     const DEFAULT_GAS_URL = "PRODUKSI_URL_GAS_DI_SINI";
     let GAS_URL = localStorage.getItem('SDIT_IQRA_GAS_URL') || DEFAULT_GAS_URL;
+    let LIST_SISWA_CACHE = [];
 
     function isValidGasUrl(url) {
       return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
@@ -444,7 +370,83 @@
     window.addEventListener('DOMContentLoaded', () => {
       initDates();
       fetchPengumumanGuru();
+      fetchSiswaGuru();
     });
+
+    // FUNGSI LOAD SISWA DINAMIS UNTUK GURU
+    async function fetchSiswaGuru() {
+      const containerBulk = document.getElementById('bulk-siswa-container');
+      const selectSingle = document.getElementById('m-siswa');
+      const containerPin = document.getElementById('guru-list-siswa-pin');
+
+      // Default Dummy Siswa jika GAS URL offline
+      const defaultSiswa = [
+        { id: "S001", nama: "Ahmad Fauzi", pin: "1234", ortu: "Bapak Budi" },
+        { id: "S002", nama: "Aisyah Nurul Rahma", pin: "5678", ortu: "Ibu Siti" },
+        { id: "S003", nama: "Bilal Al-Ghifari", pin: "1122", ortu: "Bapak Ahmad" }
+      ];
+
+      let dataSiswa = defaultSiswa;
+
+      if (isValidGasUrl(GAS_URL)) {
+        try {
+          const res = await fetch(`${GAS_URL}?action=getSiswa`);
+          const json = await res.json();
+          if (json.data && json.data.length > 0) {
+            dataSiswa = json.data;
+          }
+        } catch (e) {
+          console.warn("Gagal memuat siswa dari GAS, menggunakan data fallback.");
+        }
+      }
+
+      LIST_SISWA_CACHE = dataSiswa;
+
+      // Render Bulk Form
+      if (containerBulk) {
+        containerBulk.innerHTML = dataSiswa.map(s => `
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-white">${s.id} - ${s.nama}</span>
+              <span class="text-[10px] text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-md">Siswa</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-[11px]">
+              <div>
+                <span class="text-slate-400 block mb-0.5">Shalat Dzuhur</span>
+                <select id="bulk-dzuhur-${s.id}" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+                  <option value="Berjamaah">🕌 Berjamaah</option>
+                  <option value="Munfarid">👤 Munfarid</option>
+                  <option value="Tidak">❌ Tidak Shalat</option>
+                </select>
+              </div>
+              <div>
+                <span class="text-slate-400 block mb-0.5">Tilawah & Hafalan</span>
+                <input type="text" id="bulk-tilawah-${s.id}" placeholder="Capain hari ini..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Render Dropdown Single Form
+      if (selectSingle) {
+        selectSingle.innerHTML = '<option value="">-- Pilih Siswa --</option>' + 
+          dataSiswa.map(s => `<option value="${s.id}">${s.id} - ${s.nama}</option>`).join('');
+      }
+
+      // Render List PIN Login
+      if (containerPin) {
+        containerPin.innerHTML = dataSiswa.map(s => `
+          <div class="flex justify-between items-center p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+            <div>
+              <p class="font-bold text-white">${s.id} - ${s.nama}</p>
+              <p class="text-[10px] text-slate-500">Ortu: ${s.ortu || '-'}</p>
+            </div>
+            <span class="px-2.5 py-1 bg-slate-900 border border-slate-800 font-mono font-bold text-emerald-400 rounded-lg">PIN: ${s.pin}</span>
+          </div>
+        `).join('');
+      }
+    }
 
     function openConfigModal() {
       document.getElementById('cfg-gas-url').value = GAS_URL.includes('PRODUKSI_URL_GAS_DI_SINI') ? '' : GAS_URL;
@@ -659,16 +661,19 @@
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
 
       const tgl = document.getElementById('bulk-tanggal').value;
-      const siswaList = ['S001', 'S002', 'S003'];
+      const siswaList = LIST_SISWA_CACHE.length > 0 ? LIST_SISWA_CACHE.map(s => s.id) : ['S001', 'S002', 'S003'];
 
       try {
         for (const sId of siswaList) {
+          const elDzuhur = document.getElementById(`bulk-dzuhur-${sId}`);
+          const elTilawah = document.getElementById(`bulk-tilawah-${sId}`);
+          
           const payload = {
             action: 'addMutabaah',
             id_siswa: sId,
             tanggal: tgl,
-            dzuhur: document.getElementById(`bulk-dzuhur-${sId}`).value,
-            tilawah: document.getElementById(`bulk-tilawah-${sId}`).value || 'Sesuai Target',
+            dzuhur: elDzuhur ? elDzuhur.value : 'Berjamaah',
+            tilawah: (elTilawah && elTilawah.value) ? elTilawah.value : 'Sesuai Target',
             sumber: 'Sekolah'
           };
 
