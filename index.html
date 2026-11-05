@@ -284,6 +284,13 @@
     const DEFAULT_GAS_URL = "https://script.google.com/macros/s/AKfycbwVmfmObDSAeEHPEoRIysEDZkl_1vZtfhgp8WCVADMnwJOmT8yMdnl07JmTqRDtyrq8UA/exec";
     let GAS_URL = localStorage.getItem('SDIT_IQRA_GAS_URL') || DEFAULT_GAS_URL;
 
+    // DATA DUMMY HAK AKSES SISWA (DIGUNAKAN JIKA GAS URL BELUM DIPSETTING / OFFLINE)
+    const DUMMY_USERS = {
+      "S001": { id: "S001", nama: "Ahmad Fauzi", pin: "1234", ortu: "Bapak Budi" },
+      "S002": { id: "S002", nama: "Aisyah Nurul Rahma", pin: "5678", ortu: "Ibu Siti" },
+      "S003": { id: "S003", nama: "Bilal Al-Ghifari", pin: "1122", ortu: "Bapak Ahmad" }
+    };
+
     let CURRENT_USER = JSON.parse(localStorage.getItem('SDIT_IQRA_USER') || "null");
 
     function isValidGasUrl(url) {
@@ -346,15 +353,48 @@
       const idInput = document.getElementById('login-id').value.trim().toUpperCase();
       const pinInput = document.getElementById('login-pin').value.trim();
       const errBox = document.getElementById('login-error');
+      const btnLogin = document.getElementById('btn-login');
 
+      errBox.classList.add('hidden');
+      btnLogin.disabled = true;
+      btnLogin.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Memeriksa Akun...`;
+
+      // Jika URL GAS Valid, Verifikasi via Server Apps Script
+      if (isValidGasUrl(GAS_URL)) {
+        try {
+          const res = await fetch(`${GAS_URL}?action=loginSiswa&id_siswa=${encodeURIComponent(idInput)}&pin=${encodeURIComponent(pinInput)}`);
+          const json = await res.json();
+          
+          if (json.status === 'success' && json.user) {
+            CURRENT_USER = json.user;
+            localStorage.setItem('SDIT_IQRA_USER', JSON.stringify(CURRENT_USER));
+            showAppScreen();
+            return;
+          } else {
+            errBox.innerText = json.message || "ID Siswa atau PIN tidak cocok.";
+            errBox.classList.remove('hidden');
+            return;
+          }
+        } catch (err) {
+          console.warn("Koneksi GAS gagal, mencoba login lokal fallback...");
+        } finally {
+          btnLogin.disabled = false;
+          btnLogin.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-1.5"></i> Masuk Akun Siswa`;
+        }
+      }
+
+      // Fallback Dummy Data jika URL GAS belum disetting
       if (DUMMY_USERS[idInput] && DUMMY_USERS[idInput].pin === pinInput) {
         CURRENT_USER = DUMMY_USERS[idInput];
         localStorage.setItem('SDIT_IQRA_USER', JSON.stringify(CURRENT_USER));
         showAppScreen();
       } else {
-        errBox.innerText = "ID Siswa atau PIN salah. (Default DUMMY: S001 / PIN: 1234)";
+        errBox.innerText = "ID Siswa atau PIN salah. Akun bawaan uji coba: S001 / PIN: 1234";
         errBox.classList.remove('hidden');
       }
+
+      btnLogin.disabled = false;
+      btnLogin.innerHTML = `<i class="fa-solid fa-right-to-bracket mr-1.5"></i> Masuk Akun Siswa`;
     }
 
     function handleLogout() {
