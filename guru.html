@@ -3,137 +3,329 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LMS Guru - SD IT AL-IQRA</title>
+  <title>LMS Wali Kelas - SD IT AL-IQRA</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    /* Dark scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans pb-20">
+<body class="bg-slate-950 text-slate-100 pb-20 min-h-screen">
 
-  <nav class="bg-teal-700 text-white p-4 sticky top-0 z-50 shadow-md">
+  <!-- HEADER GURU -->
+  <nav class="bg-slate-900/90 backdrop-blur border-b border-slate-800 text-white p-4 sticky top-0 z-50 shadow-lg">
     <div class="max-w-4xl mx-auto flex justify-between items-center">
-      <div class="flex items-center space-x-2">
-        <i class="fas font-bold text-xl">🏫 Panel Wali Kelas</i>
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-slate-950 border border-emerald-500/40 rounded-xl flex items-center justify-center p-1 shadow-inner overflow-hidden">
+          <img src="logo.png" alt="Logo SD IT AL-IQRA" class="w-full h-full object-contain" onerror="this.onerror=null; this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'><rect width=\'100\' height=\'100\' fill=\'%23064e3b\' border-radius=\'10\'/><text x=\'50%\' y=\'55%\' fill=\'%2334d399\' font-size=\'22\' font-weight=\'bold\' text-anchor=\'middle\' dominant-baseline=\'middle\'>SDIT</text></svg>';">
+        </div>
+        <div>
+          <h1 class="font-bold text-base leading-tight text-emerald-400">Panel Wali Kelas IV</h1>
+          <p class="text-xs text-slate-400">SD IT AL-IQRA Tirtamulya</p>
+        </div>
       </div>
-      <span class="text-xs bg-teal-800 px-3 py-1 rounded-full border border-teal-500">Kelas 4A</span>
+      <span class="text-xs bg-emerald-950 border border-emerald-600/50 text-emerald-300 px-3 py-1.5 rounded-full font-semibold flex items-center gap-1.5">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Ustadz Ari
+      </span>
     </div>
   </nav>
 
-  <main class="max-w-4xl mx-auto p-4">
-    <!-- Navigation Tabs -->
-    <div class="flex space-x-2 border-b border-slate-300 pb-2 mb-6 overflow-x-auto">
-      <button onclick="switchTab('pengumuman')" id="tab-pengumuman" class="px-4 py-2 font-semibold rounded-lg bg-teal-700 text-white text-sm whitespace-nowrap">📢 Pengumuman</button>
-      <button onclick="switchTab('materi')" id="tab-materi" class="px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap">📚 Materi</button>
-      <button onclick="switchTab('mutabaah')" id="tab-mutabaah" class="px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap">📝 Input Mutaba'ah</button>
-      <button onclick="switchTab('perizinan')" id="tab-perizinan" class="px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap">✉️ Surat Izin</button>
+  <main class="max-w-4xl mx-auto p-4 space-y-6">
+
+    <!-- NAVIGASI TAB GURU -->
+    <div class="flex space-x-2 border-b border-slate-800 pb-3 overflow-x-auto">
+      <button id="tab-pengumuman" onclick="switchTab('pengumuman')" class="px-4 py-2.5 font-bold rounded-xl bg-emerald-600 text-white text-xs whitespace-nowrap shadow-lg shadow-emerald-900/20">📢 Pengumuman</button>
+      <button id="tab-materi" onclick="switchTab('materi')" class="px-4 py-2.5 font-semibold rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-xs whitespace-nowrap hover:bg-slate-800 hover:text-slate-200">📚 Materi Video</button>
+      <button id="tab-mutabaah" onclick="switchTab('mutabaah')" class="px-4 py-2.5 font-semibold rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-xs whitespace-nowrap hover:bg-slate-800 hover:text-slate-200">📝 Input Mutaba'ah</button>
+      <button id="tab-perizinan" onclick="switchTab('perizinan')" class="px-4 py-2.5 font-semibold rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-xs whitespace-nowrap hover:bg-slate-800 hover:text-slate-200">✉️ Surat Izin</button>
+      <button id="tab-rekap" onclick="switchTab('rekap')" class="px-4 py-2.5 font-semibold rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-xs whitespace-nowrap hover:bg-slate-800 hover:text-slate-200">👥 PIN & Rekap</button>
     </div>
 
     <!-- TAB 1: PENGUMUMAN -->
     <div id="sec-pengumuman" class="space-y-6">
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-lg text-teal-800 mb-3"><i class="fas font-bold text-teal-600"></i> Buat Pengumuman Baru</h3>
-        <form onsubmit="handlePengumuman(event)" class="space-y-4">
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800">
+        <h3 class="font-bold text-base text-emerald-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-bullhorn text-emerald-500"></i> Buat Pengumuman Baru</h3>
+        <form onsubmit="window.handlePengumuman(event)" class="space-y-4 text-xs">
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Judul Pengumuman</label>
-            <input type="text" id="p-judul" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none">
+            <label class="block font-bold text-slate-300 mb-1.5">Judul Pengumuman</label>
+            <input type="text" id="p-judul" required placeholder="Contoh: Kegiatan Shalat Dhuha Bersama" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Isi Pengumuman</label>
-            <textarea id="p-konten" rows="3" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none"></textarea>
+            <label class="block font-bold text-slate-300 mb-1.5">Isi Pengumuman</label>
+            <textarea id="p-konten" rows="3" required placeholder="Tuliskan informasi penting untuk orang tua..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition"></textarea>
           </div>
-          <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Publikasikan</button>
+          <button type="submit" id="btn-p" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-emerald-950 transition-all">Publikasikan Pengumuman</button>
         </form>
+      </div>
+
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800 space-y-3">
+        <h3 class="font-bold text-sm text-slate-300 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-slate-500"></i> Riwayat Pengumuman</h3>
+        <div id="list-pengumuman" class="space-y-3 text-xs">
+          <p class="text-slate-500">Memuat pengumuman...</p>
+        </div>
       </div>
     </div>
 
-    <!-- TAB 2: MATERI -->
+    <!-- TAB 2: MATERI PEMBELAJARAN VIDEO -->
     <div id="sec-materi" class="space-y-6 hidden">
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-lg text-teal-800 mb-3">Upload Materi & Link Video</h3>
-        <form onsubmit="handleMateri(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Mata Pelajaran</label>
-            <select id="m-mapel" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
-              <option value="Matematika">Matematika</option>
-              <option value="IPAS">IPAS</option>
-              <option value="PAI">PAI</option>
-              <option value="Bahasa Indonesia">Bahasa Indonesia</option>
-              <option value="Bahasa Inggris">Bahasa Inggris</option>
-            </select>
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800">
+        <h3 class="font-bold text-base text-emerald-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-video text-emerald-500"></i> Upload Materi & Link Video YouTube</h3>
+        <form onsubmit="window.handleMateri(event)" class="space-y-4 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Mata Pelajaran</label>
+              <select id="m-mapel" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="Matematika">Matematika</option>
+                <option value="IPAS">IPAS</option>
+                <option value="PAI">PAI</option>
+                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                <option value="Bahasa Inggris">Bahasa Inggris</option>
+                <option value="Pancasila">Pendidikan Pancasila</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Tanggal</label>
+              <input type="date" id="m-tanggal" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Judul Materi</label>
-            <input type="text" id="m-judul" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
+            <label class="block font-bold text-slate-300 mb-1.5">Judul Materi / Bab</label>
+            <input type="text" id="m-judul" required placeholder="Contoh: Bab 2 - Operasi Hitung Pecahan" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Link Video YouTube</label>
-            <input type="url" id="m-url" placeholder="https://www.youtube.com/watch?v=..." required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
+            <label class="block font-bold text-slate-300 mb-1.5">Link Video YouTube</label>
+            <input type="url" id="m-url" placeholder="https://www.youtube.com/watch?v=..." required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat</label>
-            <textarea id="m-deskripsi" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none"></textarea>
+            <label class="block font-bold text-slate-300 mb-1.5">Deskripsi Ringkas</label>
+            <textarea id="m-deskripsi" rows="2" placeholder="Penjelasan rangkuman materi video..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
           </div>
-          <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Simpan Materi</button>
+          <button type="submit" id="btn-m" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all">Simpan & Publis Materi Video</button>
         </form>
+      </div>
+
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800 space-y-3">
+        <h3 class="font-bold text-sm text-slate-300">Daftar Video Pembelajaran Diterbitkan</h3>
+        <div id="list-materi" class="space-y-3 text-xs">
+          <p class="text-slate-500">Memuat materi...</p>
+        </div>
       </div>
     </div>
 
     <!-- TAB 3: MUTABAAH -->
     <div id="sec-mutabaah" class="space-y-6 hidden">
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-lg text-teal-800 mb-3">Input Mutaba'ah Siswa</h3>
-        <form onsubmit="handleMutabaahGuru(event)" class="space-y-4">
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal</label>
-            <input type="date" id="mg-tanggal" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800">
+        <h3 class="font-bold text-base text-emerald-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-pen-to-square text-emerald-500"></i> Input Mutaba'ah Harian Siswa</h3>
+        <form onsubmit="window.handleMutabaahGuru(event)" class="space-y-4 text-xs">
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Tanggal</label>
+              <input type="date" id="mg-tanggal" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Pilih Siswa</label>
+              <select id="mg-siswa" required class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="">-- Memuat Siswa --</option>
+              </select>
+            </div>
           </div>
           <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Siswa</label>
-            <select id="mg-siswa" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
-              <option value="">-- Memuat Daftar Siswa --</option>
-            </select>
+            <label class="block font-bold text-slate-300 mb-2">Checklist Shalat Fardhu 5 Waktu</label>
+            <div class="grid grid-cols-5 gap-2 text-center text-xs">
+              <label class="p-2.5 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                <input type="checkbox" id="mg-subuh" checked class="accent-emerald-500 w-4 h-4"> <span class="text-slate-300">Subuh</span>
+              </label>
+              <label class="p-2.5 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                <input type="checkbox" id="mg-dzuhur" checked class="accent-emerald-500 w-4 h-4"> <span class="text-slate-300">Dzuhur</span>
+              </label>
+              <label class="p-2.5 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                <input type="checkbox" id="mg-ashar" checked class="accent-emerald-500 w-4 h-4"> <span class="text-slate-300">Ashar</span>
+              </label>
+              <label class="p-2.5 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                <input type="checkbox" id="mg-maghrib" checked class="accent-emerald-500 w-4 h-4"> <span class="text-slate-300">Maghrib</span>
+              </label>
+              <label class="p-2.5 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                <input type="checkbox" id="mg-isya" checked class="accent-emerald-500 w-4 h-4"> <span class="text-slate-300">Isya</span>
+              </label>
+            </div>
           </div>
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-subuh" checked> <span>Subuh</span></label>
-            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-dzuhur" checked> <span>Dzuhur</span></label>
-            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-ashar" checked> <span>Ashar</span></label>
-            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-maghrib" checked> <span>Maghrib</span></label>
-            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-isya" checked> <span>Isya</span></label>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1.5">Tilawah / Surah</label>
+            <input type="text" id="mg-tilawah" placeholder="Contoh: Surah Al-Mulk 1-15" class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500">
           </div>
-          <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Simpan Data Mutaba'ah</button>
+          <div>
+            <label class="block font-bold text-slate-300 mb-1.5">Catatan Evaluasi Guru</label>
+            <textarea id="mg-catatan" rows="2" placeholder="Catatan perkembangan karakter ananda..." class="w-full p-3 bg-slate-950 border border-slate-700 rounded-xl text-slate-100 outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+          </div>
+          <button type="submit" id="btn-mt" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl shadow-lg transition-all">Simpan Data Mutaba'ah</button>
         </form>
+      </div>
+
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800 space-y-3">
+        <h3 class="font-bold text-sm text-slate-300 flex items-center gap-2"><i class="fa-solid fa-list-check text-emerald-500"></i> Riwayat Mutaba'ah Masuk (Guru & Orang Tua)</h3>
+        <div id="list-mutabaah-guru" class="space-y-3 text-xs">
+          <p class="text-slate-500">Memuat riwayat mutaba'ah...</p>
+        </div>
       </div>
     </div>
 
     <!-- TAB 4: PERIZINAN -->
     <div id="sec-perizinan" class="space-y-6 hidden">
-      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-        <h3 class="font-bold text-lg text-teal-800 mb-3">Daftar Surat Izin Masuk</h3>
-        <div id="list-perizinan" class="space-y-3">
-          <p class="text-sm text-slate-500">Memuat data perizinan...</p>
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800">
+        <h3 class="font-bold text-base text-emerald-400 mb-4 flex items-center gap-2"><i class="fa-solid fa-envelope-open-text text-emerald-500"></i> Surat Izin Masuk Dari Orang Tua</h3>
+        <div id="list-perizinan" class="space-y-3 text-xs">
+          <p class="text-slate-500">Memuat data perizinan...</p>
         </div>
       </div>
     </div>
+
+    <!-- TAB 5: REKAP & PIN SISWA -->
+    <div id="sec-rekap" class="space-y-6 hidden">
+      <div class="bg-slate-900 p-5 rounded-2xl shadow-xl border border-slate-800 space-y-3">
+        <h3 class="font-bold text-base text-emerald-400 mb-2 flex items-center gap-2"><i class="fa-solid fa-key text-emerald-500"></i> Informasi PIN Login Orang Tua Siswa</h3>
+        <div id="list-siswa-pin" class="space-y-2 text-xs">
+          <p class="text-slate-500">Memuat data akun siswa...</p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbwVmfmObDSAeEHPEoRIysEDZkl_1vZtfhgp8WCVADMnwJOmT8yMdnl07JmTqRDtyrq8UA/exec";
 
+    // Explicitly attach all form submit handler functions to window scope to avoid ReferenceErrors
+    window.handlePengumuman = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-p');
+      btn.disabled = true; btn.innerText = 'Mempublikasikan...';
+
+      const payload = {
+        action: 'addPengumuman',
+        judul: document.getElementById('p-judul').value,
+        konten: document.getElementById('p-konten').value,
+        penulis: 'Ustadz Ari'
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('p-judul').value = '';
+          document.getElementById('p-konten').value = '';
+          fetchPengumuman();
+        } else {
+          alert(data.message || 'Gagal mempublikasikan pengumuman');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      } finally {
+        btn.disabled = false; btn.innerText = 'Publikasikan Pengumuman';
+      }
+    };
+
+    window.handleMateri = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-m');
+      btn.disabled = true; btn.innerText = 'Menyimpan...';
+
+      const payload = {
+        action: 'addMateri',
+        mapel: document.getElementById('m-mapel').value,
+        tanggal: document.getElementById('m-tanggal').value,
+        judul: document.getElementById('m-judul').value,
+        videoUrl: document.getElementById('m-url').value,
+        deskripsi: document.getElementById('m-deskripsi').value
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('m-judul').value = '';
+          document.getElementById('m-url').value = '';
+          document.getElementById('m-deskripsi').value = '';
+          fetchMateri();
+        } else {
+          alert(data.message || 'Gagal menyimpan materi');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      } finally {
+        btn.disabled = false; btn.innerText = 'Simpan & Publis Materi Video';
+      }
+    };
+
+    window.handleMutabaahGuru = async function(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-mt');
+      btn.disabled = true; btn.innerText = 'Menyimpan...';
+
+      const payload = {
+        action: 'addMutabaah',
+        tanggal: document.getElementById('mg-tanggal').value,
+        siswaId: document.getElementById('mg-siswa').value,
+        subuh: document.getElementById('mg-subuh').checked ? 'Ya' : 'Belum',
+        dzuhur: document.getElementById('mg-dzuhur').checked ? 'Ya' : 'Belum',
+        ashar: document.getElementById('mg-ashar').checked ? 'Ya' : 'Belum',
+        maghrib: document.getElementById('mg-maghrib').checked ? 'Ya' : 'Belum',
+        isya: document.getElementById('mg-isya').checked ? 'Ya' : 'Belum',
+        tilawah: document.getElementById('mg-tilawah').value || '-',
+        catatan: document.getElementById('mg-catatan').value || '-',
+        pengisi: 'Guru'
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('mg-tilawah').value = '';
+          document.getElementById('mg-catatan').value = '';
+          fetchMutabaahGuru();
+          alert('Data Mutabaah berhasil disimpan');
+        } else {
+          alert(data.message || 'Gagal menyimpan mutabaah');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      } finally {
+        btn.disabled = false; btn.innerText = 'Simpan Data Mutaba\'ah';
+      }
+    };
+
     document.addEventListener("DOMContentLoaded", () => {
-      document.getElementById('mg-tanggal').value = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('mg-tanggal').value = today;
+      document.getElementById('m-tanggal').value = today;
+      
       fetchSiswa();
+      fetchPengumuman();
+      fetchMateri();
+      fetchMutabaahGuru();
       fetchPerizinan();
     });
 
-    function switchTab(tab) {
-      ['pengumuman', 'materi', 'mutabaah', 'perizinan'].forEach(t => {
-        document.getElementById(`sec-${t}`).classList.toggle('hidden', t !== tab);
-        const btn = document.getElementById(`tab-${t}`);
-        if(t === tab) {
-          btn.className = "px-4 py-2 font-semibold rounded-lg bg-teal-700 text-white text-sm whitespace-nowrap";
-        } else {
-          btn.className = "px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap";
+    function getYouTubeEmbedUrl(url) {
+      if (!url) return null;
+      try {
+        let videoId = null;
+        if (url.includes('youtu.be/')) {
+          videoId = url.split('youtu.be/')[1].split('?')[0].split('&')[0];
+        } else if (url.includes('youtube.com/watch')) {
+          const urlParams = new URLSearchParams(url.split('?')[1]);
+          videoId = urlParams.get('v');
+        } else if (url.includes('youtube.com/embed/')) {
+          videoId = url.split('youtube.com/embed/')[1].split('?')[0];
         }
-      });
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+      } catch (e) {
+        return null;
+      }
     }
 
     function formatDateIndo(dateStr) {
@@ -148,58 +340,112 @@
       return dateStr;
     }
 
+    function switchTab(tab) {
+      ['pengumuman', 'materi', 'mutabaah', 'perizinan', 'rekap'].forEach(t => {
+        document.getElementById(`sec-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`tab-${t}`);
+        if(t === tab) {
+          btn.className = "px-4 py-2.5 font-bold rounded-xl bg-emerald-600 text-white text-xs whitespace-nowrap shadow-lg shadow-emerald-900/20";
+        } else {
+          btn.className = "px-4 py-2.5 font-semibold rounded-xl bg-slate-900 text-slate-400 border border-slate-800 text-xs whitespace-nowrap hover:bg-slate-800 hover:text-slate-200";
+        }
+      });
+    }
+
+    async function fetchMutabaahGuru() {
+      try {
+        const res = await fetch(`${API_URL}?action=getMutabaah&siswaId=ALL`);
+        const data = await res.json();
+        const container = document.getElementById('list-mutabaah-guru');
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada riwayat mutaba\'ah.</p>'; return; }
+
+        container.innerHTML = data.map(m => `
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-2">
+            <div class="flex justify-between font-bold text-slate-300">
+              <span>Siswa: ${m.siswaId} (${formatDateIndo(m.tanggal)})</span>
+              <span class="px-2 py-0.5 rounded text-[10px] ${m.pengisi === 'Orang Tua' ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">
+                ${m.pengisi === 'Orang Tua' ? '🏡 Setoran Ortu' : '🏫 Wali Kelas'}
+              </span>
+            </div>
+            <div class="grid grid-cols-5 gap-1 text-[10px] text-center font-bold">
+              <span class="${m.subuh === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Subuh: ${m.subuh}</span>
+              <span class="${m.dzuhur === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Dzuhur: ${m.dzuhur}</span>
+              <span class="${m.ashar === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Ashar: ${m.ashar}</span>
+              <span class="${m.maghrib === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Maghrib: ${m.maghrib}</span>
+              <span class="${m.isya === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Isya: ${m.isya}</span>
+            </div>
+            ${m.tilawah ? `<p class="text-[11px] text-slate-400">📖 <b class="text-slate-300">Tilawah:</b> ${m.tilawah}</p>` : ''}
+            ${m.catatan ? `<p class="text-[11px] text-slate-400">💬 <b class="text-slate-300">Catatan:</b> ${m.catatan}</p>` : ''}
+          </div>
+        `).join('');
+      } catch(e) { console.error(e); }
+    }
+
     async function fetchSiswa() {
       try {
         const res = await fetch(`${API_URL}?action=getSiswa`);
         const data = await res.json();
+        
         const sel = document.getElementById('mg-siswa');
-        sel.innerHTML = '<option value="">-- Pilih Siswa --</option>';
-        data.forEach(s => {
-          sel.innerHTML += `<option value="${s.id}">${s.id} - ${s.nama}</option>`;
-        });
+        const containerPin = document.getElementById('list-siswa-pin');
+
+        if(data && data.length > 0) {
+          sel.innerHTML = '<option value="">-- Pilih Siswa --</option>' + 
+            data.map(s => `<option value="${s.id}">${s.id} - ${s.nama}</option>`).join('');
+
+          containerPin.innerHTML = data.map(s => `
+            <div class="flex justify-between items-center p-3.5 bg-slate-950 border border-slate-800 rounded-xl">
+              <div>
+                <p class="font-bold text-slate-200">${s.id} - ${s.nama}</p>
+                <p class="text-[10px] text-slate-500">Akun Siswa Kelas IV</p>
+              </div>
+              <span class="px-3 py-1 bg-emerald-950 border border-emerald-600/40 text-emerald-400 font-mono font-bold rounded-lg text-xs">PIN: ${s.pin}</span>
+            </div>
+          `).join('');
+        }
       } catch(e) { console.error(e); }
     }
 
-    async function handlePengumuman(e) {
-      e.preventDefault();
-      const payload = {
-        action: 'addPengumuman',
-        judul: document.getElementById('p-judul').value,
-        konten: document.getElementById('p-konten').value
-      };
-      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      alert('Pengumuman Berhasil Dipublikasikan!');
-      e.target.reset();
+    async function fetchPengumuman() {
+      try {
+        const res = await fetch(`${API_URL}?action=getPengumuman`);
+        const data = await res.json();
+        const container = document.getElementById('list-pengumuman');
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada pengumuman.</p>'; return; }
+        
+        container.innerHTML = data.map(p => `
+          <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-1.5">
+            <div class="flex justify-between items-center font-bold">
+              <span class="text-emerald-400 text-sm">${p.judul}</span>
+              <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded-md">${formatDateIndo(p.tanggal)}</span>
+            </div>
+            <p class="text-slate-300 leading-relaxed text-xs">${p.konten}</p>
+          </div>
+        `).join('');
+      } catch(e) { console.error(e); }
     }
 
-    async function handleMateri(e) {
-      e.preventDefault();
-      const payload = {
-        action: 'addMateri',
-        mapel: document.getElementById('m-mapel').value,
-        judul: document.getElementById('m-judul').value,
-        videoUrl: document.getElementById('m-url').value,
-        deskripsi: document.getElementById('m-deskripsi').value
-      };
-      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      alert('Materi Berhasil Ditambahkan!');
-      e.target.reset();
-    }
+    async function fetchMateri() {
+      try {
+        const res = await fetch(`${API_URL}?action=getMateri`);
+        const data = await res.json();
+        const container = document.getElementById('list-materi');
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada materi video.</p>'; return; }
 
-    async function handleMutabaahGuru(e) {
-      e.preventDefault();
-      const payload = {
-        action: 'addMutabaah',
-        tanggal: document.getElementById('mg-tanggal').value,
-        siswaId: document.getElementById('mg-siswa').value,
-        subuh: document.getElementById('mg-subuh').checked ? 'Ya' : 'Belum',
-        dzuhur: document.getElementById('mg-dzuhur').checked ? 'Ya' : 'Belum',
-        ashar: document.getElementById('mg-ashar').checked ? 'Ya' : 'Belum',
-        maghrib: document.getElementById('mg-maghrib').checked ? 'Ya' : 'Belum',
-        isya: document.getElementById('mg-isya').checked ? 'Ya' : 'Belum'
-      };
-      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      alert('Data Mutabaah Berhasil Disimpan!');
+        container.innerHTML = data.map(m => `
+          <div class="p-4 bg-slate-950 border border-slate-800 rounded-xl space-y-2">
+            <div class="flex justify-between items-center">
+              <span class="text-xs font-bold text-emerald-400 bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 rounded-full">${m.mapel}</span>
+              <span class="text-[10px] text-slate-500">${formatDateIndo(m.tanggal)}</span>
+            </div>
+            <h4 class="font-bold text-slate-200 text-sm">${m.judul}</h4>
+            <p class="text-slate-400 text-xs">${m.deskripsi || '-'}</p>
+            <a href="${m.videoUrl}" target="_blank" class="inline-flex items-center text-emerald-400 font-bold hover:underline pt-1 text-xs">
+              <i class="fa-solid fa-play-circle mr-1 text-red-500 text-sm"></i> Tonton Video YouTube
+            </a>
+          </div>
+        `).join('');
+      } catch(e) { console.error(e); }
     }
 
     async function fetchPerizinan() {
@@ -207,15 +453,16 @@
         const res = await fetch(`${API_URL}?action=getPerizinan`);
         const data = await res.json();
         const container = document.getElementById('list-perizinan');
-        if(!data.length) { container.innerHTML = '<p class="text-sm text-slate-500">Belum ada surat izin.</p>'; return; }
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada surat izin masuk.</p>'; return; }
+
         container.innerHTML = data.map(item => `
-          <div class="p-3 border rounded-lg bg-slate-50 text-sm">
-            <div class="flex justify-between font-bold text-slate-700">
+          <div class="p-4 border border-slate-800 rounded-xl bg-slate-950 space-y-1.5">
+            <div class="flex justify-between font-bold text-slate-200">
               <span>${item.namaSiswa} (${item.siswaId})</span>
-              <span class="text-xs text-teal-600 bg-teal-50 px-2 py-0.5 rounded">${formatDateIndo(item.tanggal)}</span>
+              <span class="text-xs text-emerald-400 bg-emerald-950 border border-emerald-800 px-2 py-0.5 rounded-full">${formatDateIndo(item.tanggal)}</span>
             </div>
-            <div class="text-xs font-semibold text-amber-600 mt-1">Jenis: ${item.jenis}</div>
-            <p class="text-xs text-slate-600 mt-1">${item.alasan}</p>
+            <div class="text-xs font-semibold text-amber-400">Jenis Izin: ${item.jenis}</div>
+            <p class="text-slate-300 leading-relaxed text-xs">${item.alasan}</p>
           </div>
         `).join('');
       } catch(e) { console.error(e); }
