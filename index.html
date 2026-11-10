@@ -335,27 +335,37 @@
       return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
     }
 
-    // Helper untuk Format Tanggal Indonesia (Penanganan Tanggal ISO Fix)
-    function formatDateIndo(dateStr) {
-      if (!dateStr) return '-';
-      let cleanStr = String(dateStr);
-      if (cleanStr.includes('T')) {
-        cleanStr = cleanStr.split('T')[0];
-      }
-      const parts = cleanStr.split('-');
-      if (parts.length === 3) {
-        const d = new Date(parts[0], parts[1] - 1, parts[2]);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-        }
-      }
-      return cleanStr;
+// Parsing tanggal aman dari Offset Timezone (WIB/UTC)
+function formatDateIndo(dateStr) {
+  if (!dateStr) return '-';
+  
+  if (typeof dateStr === 'string') {
+    const cleanDate = dateStr.split('T')[0];
+    const parts = cleanDate.split('-');
+    
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      
+      const date = new Date(year, month, day);
+      return date.toLocaleDateString('id-ID', { 
+        weekday: 'short', 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
     }
-
-    function getTodayIso() {
-      const today = new Date();
-      return today.toISOString().split('T')[0];
-    }
+  }
+  
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('id-ID', { 
+    weekday: 'short', 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+}
 
     window.addEventListener('DOMContentLoaded', () => {
       if(CURRENT_USER) showAppScreen(); else showLoginScreen();
