@@ -335,36 +335,32 @@
       return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
     }
 
-// Parsing tanggal aman dari Offset Timezone (WIB/UTC)
 function formatDateIndo(dateStr) {
-  if (!dateStr) return '-';
+  if (!dateStr || dateStr === '-') return '-';
   
-  if (typeof dateStr === 'string') {
-    const cleanDate = dateStr.split('T')[0];
-    const parts = cleanDate.split('-');
-    
-    if (parts.length === 3) {
-      const year = parseInt(parts[0], 10);
-      const month = parseInt(parts[1], 10) - 1;
-      const day = parseInt(parts[2], 10);
-      
-      const date = new Date(year, month, day);
-      return date.toLocaleDateString('id-ID', { 
-        weekday: 'short', 
-        day: 'numeric', 
-        month: 'short', 
-        year: 'numeric' 
-      });
-    }
+  // Ambil hanya karakter YYYY-MM-DD (mengabaikan jam/UTC offset)
+  let cleanStr = String(dateStr).trim();
+  if (cleanStr.includes('T')) {
+    cleanStr = cleanStr.split('T')[0];
   }
   
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('id-ID', { 
-    weekday: 'short', 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
-  });
+  const parts = cleanStr.split('-');
+  if (parts.length === 3) {
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+    
+    // Gunakan constructor Date(year, month, day) untuk waktu LOKAL pengguna
+    const date = new Date(year, month, day);
+    return date.toLocaleDateString('id-ID', { 
+      weekday: 'short', 
+      day: 'numeric', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+  }
+  
+  return dateStr;
 }
 
     window.addEventListener('DOMContentLoaded', () => {
