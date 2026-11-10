@@ -1,819 +1,224 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-950">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Wali Kelas IV - SD IT AL-IQRA</title>
+  <title>LMS Guru - SD IT AL-IQRA</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] },
-          colors: { 
-            brand: { 50: '#ecfdf5', 100: '#d1fae5', 400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857' } 
-          }
-        }
-      }
-    }
-  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="min-h-full flex flex-col font-sans antialiased text-slate-100 bg-slate-950 selection:bg-brand-500 selection:text-white">
+<body class="bg-slate-100 text-slate-800 font-sans pb-20">
 
-  <!-- HEADER UTAMA WALI KELAS -->
-  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-md">
-    <div class="max-w-md mx-auto px-4 py-3 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-brand-600 to-emerald-500 p-0.5 shadow-md flex items-center justify-center">
-          <div class="w-full h-full bg-slate-900 rounded-[14px] p-1.5 flex items-center justify-center">
-            <img src="logo.png" alt="Logo" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/100x100/059669/ffffff?text=IQRA';"/>
-          </div>
-        </div>
-        <div>
-          <h1 class="font-bold text-white leading-tight text-sm flex items-center gap-1.5">
-            <span>Ustadz Ari</span>
-            <span class="px-2 py-0.5 bg-brand-950 text-brand-400 border border-brand-800 rounded-full text-[10px] font-extrabold">WALI KELAS</span>
-          </h1>
-          <p class="text-[11px] text-slate-400 font-medium">SD IT AL-IQRA • Kelas IV</p>
-        </div>
+  <nav class="bg-teal-700 text-white p-4 sticky top-0 z-50 shadow-md">
+    <div class="max-w-4xl mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-2">
+        <i class="fas font-bold text-xl">🏫 Panel Wali Kelas</i>
       </div>
-      <button onclick="openConfigModal()" title="Pengaturan Server API" class="text-slate-400 hover:text-white hover:bg-slate-800 p-2.5 rounded-xl border border-slate-800 transition-colors">
-        <i class="fa-solid fa-gear text-xs"></i>
-      </button>
+      <span class="text-xs bg-teal-800 px-3 py-1 rounded-full border border-teal-500">Kelas 4A</span>
     </div>
-  </header>
+  </nav>
 
-  <!-- CONTAINER DASHBOARD GURU -->
-  <main class="flex-1 max-w-md w-full mx-auto p-4 pb-12 space-y-4">
-
-    <!-- NAVIGASI TAB MENU GURU -->
-    <div class="grid grid-cols-5 gap-1 bg-slate-900 p-1 rounded-2xl border border-slate-800 text-center shadow-inner">
-      <button id="btn-guru-pengumuman" onclick="switchGuruTab('pengumuman')" class="py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold text-[10px] shadow transition-all">
-        📢 Info
-      </button>
-      <button id="btn-guru-materi" onclick="switchGuruTab('materi')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 font-semibold text-[10px] transition-all">
-        📚 Materi
-      </button>
-      <button id="btn-guru-mutabaah" onclick="switchGuruTab('mutabaah')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 font-semibold text-[10px] transition-all">
-        ✏️ Input
-      </button>
-      <button id="btn-guru-izin" onclick="switchGuruTab('izin')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 font-semibold text-[10px] transition-all">
-        📬 Izin
-      </button>
-      <button id="btn-guru-rekap" onclick="switchGuruTab('rekap')" class="py-2.5 rounded-xl text-slate-400 hover:text-slate-200 font-semibold text-[10px] transition-all">
-        👥 Rekap
-      </button>
+  <main class="max-w-4xl mx-auto p-4">
+    <!-- Navigation Tabs -->
+    <div class="flex space-x-2 border-b border-slate-300 pb-2 mb-6 overflow-x-auto">
+      <button onclick="switchTab('pengumuman')" id="tab-pengumuman" class="px-4 py-2 font-semibold rounded-lg bg-teal-700 text-white text-sm whitespace-nowrap">📢 Pengumuman</button>
+      <button onclick="switchTab('materi')" id="tab-materi" class="px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap">📚 Materi</button>
+      <button onclick="switchTab('mutabaah')" id="tab-mutabaah" class="px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap">📝 Input Mutaba'ah</button>
+      <button onclick="switchTab('perizinan')" id="tab-perizinan" class="px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap">✉️ Surat Izin</button>
     </div>
 
-    <!-- TAB 1: KELOLA PENGUMUMAN -->
-    <section id="sec-guru-pengumuman" class="space-y-4">
-      <div class="bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3.5 shadow-sm">
-        <h2 class="font-bold text-sm text-brand-400 flex items-center gap-2">
-          <i class="fa-solid fa-bullhorn text-brand-500"></i> Publikasikan Pengumuman
-        </h2>
-        <form onsubmit="handlePostPengumuman(event)" class="space-y-3 text-xs">
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-semibold text-slate-300 mb-1">Kategori</label>
-              <select id="p-kategori" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-medium focus:ring-2 focus:ring-brand-500">
-                <option value="Penting">🔥 Penting</option>
-                <option value="Kegiatan">📅 Kegiatan Kelas</option>
-                <option value="Tugas">📝 Tugas Rumah</option>
-                <option value="Umum">📢 Informasi Umum</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-semibold text-slate-300 mb-1">Tanggal</label>
-              <input type="date" id="p-tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white focus:ring-2 focus:ring-brand-500">
-            </div>
+    <!-- TAB 1: PENGUMUMAN -->
+    <div id="sec-pengumuman" class="space-y-6">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-lg text-teal-800 mb-3"><i class="fas font-bold text-teal-600"></i> Buat Pengumuman Baru</h3>
+        <form onsubmit="handlePengumuman(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Judul Pengumuman</label>
+            <input type="text" id="p-judul" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none">
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Judul Pengumuman</label>
-            <input type="text" id="p-judul" required placeholder="Contoh: Jadwal Shalat Dhuha Bersama" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-600 focus:ring-2 focus:ring-brand-500">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Isi Pengumuman</label>
+            <textarea id="p-konten" rows="3" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-teal-500 outline-none"></textarea>
           </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Isi Pengumuman / Pesan</label>
-            <textarea id="p-isi" rows="3" required placeholder="Tuliskan detail informasi untuk orang tua murid..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-600 focus:ring-2 focus:ring-brand-500"></textarea>
-          </div>
-          <button type="submit" id="btn-post-p" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
-            <i class="fa-solid fa-paper-plane mr-1.5"></i> Publikasikan Pengumuman
-          </button>
+          <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Publikasikan</button>
         </form>
       </div>
+    </div>
 
-      <!-- RIWAYAT PENGUMUMAN DITERBITKAN -->
-      <div class="space-y-2.5">
-        <div class="flex justify-between items-center px-1">
-          <h3 class="font-bold text-xs text-slate-300">Pengumuman Terpublikasi</h3>
-          <button onclick="fetchPengumumanGuru()" class="text-[11px] text-brand-400 hover:text-brand-300 font-semibold">
-            <i class="fa-solid fa-rotate mr-1"></i> Refresh
-          </button>
-        </div>
-        <div id="guru-list-pengumuman" class="space-y-2.5">
-          <div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800/80">Memuat pengumuman...</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 2: KELOLA MATERI PEMBELAJARAN -->
-    <section id="sec-guru-materi" class="hidden space-y-4">
-      <div class="bg-slate-900 p-4 sm:p-5 rounded-2xl border border-slate-800 space-y-3.5 shadow-sm">
-        <h2 class="font-bold text-sm text-brand-400 flex items-center gap-2">
-          <i class="fa-solid fa-book-bookmark text-brand-500"></i> Tambah Materi Pembelajaran
-        </h2>
-        <form onsubmit="handlePostMateri(event)" class="space-y-3 text-xs">
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-semibold text-slate-300 mb-1">Mata Pelajaran</label>
-              <select id="mat-mapel" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white font-medium focus:ring-2 focus:ring-brand-500">
-                <option value="Matematika">🔢 Matematika</option>
-                <option value="IPAS">🌿 IPAS (IPA & IPS)</option>
-                <option value="PAI & BQ">📖 PAI & Al-Qur'an</option>
-                <option value="Bahasa Indonesia">🇮🇩 Bahasa Indonesia</option>
-                <option value="Bahasa Inggris">🇬🇧 Bahasa Inggris</option>
-                <option value="Pancasila">🦅 Pendidikan Pancasila</option>
-                <option value="Seni & SBdP">🎨 Seni & SBdP</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-semibold text-slate-300 mb-1">Tanggal</label>
-              <input type="date" id="mat-tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white focus:ring-2 focus:ring-brand-500">
-            </div>
-          </div>
+    <!-- TAB 2: MATERI -->
+    <div id="sec-materi" class="space-y-6 hidden">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-lg text-teal-800 mb-3">Upload Materi & Link Video</h3>
+        <form onsubmit="handleMateri(event)" class="space-y-4">
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Judul Materi / Bab</label>
-            <input type="text" id="mat-judul" required placeholder="Contoh: Bab 2 - Operasi Hitung Pecahan" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-600 focus:ring-2 focus:ring-brand-500">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Link Video YouTube / Drive</label>
-            <input type="url" id="mat-url" required placeholder="https://www.youtube.com/watch?v=..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-600 font-mono text-[11px] focus:ring-2 focus:ring-brand-500">
-          </div>
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Deskripsi / Rangkuman Singkat</label>
-            <textarea id="mat-deskripsi" rows="3" placeholder="Penjelasan ringkas mengenai isi video pembelajaran ini..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-white placeholder-slate-600 focus:ring-2 focus:ring-brand-500"></textarea>
-          </div>
-          <button type="submit" id="btn-post-materi" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
-            <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Simpan & Publis Materi Video
-          </button>
-        </form>
-      </div>
-
-      <!-- DAFTAR MATERI DITERBITKAN -->
-      <div class="space-y-2.5">
-        <div class="flex justify-between items-center px-1">
-          <h3 class="font-bold text-xs text-slate-300">Daftar Video Pembelajaran</h3>
-          <button onclick="fetchMateriGuru()" class="text-[11px] text-brand-400 hover:text-brand-300 font-semibold">
-            <i class="fa-solid fa-rotate mr-1"></i> Refresh
-          </button>
-        </div>
-        <div id="guru-list-materi" class="space-y-2.5">
-          <div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800/80">Memuat materi...</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TAB 3: INPUT MUTABA'AH (BULK & SINGLE) -->
-    <section id="sec-guru-mutabaah" class="hidden space-y-4">
-      
-      <!-- MODE SWITCHING INPUT MUTABAAH -->
-      <div class="flex rounded-xl bg-slate-900 p-1 border border-slate-800 text-xs font-bold">
-        <button id="btn-mode-bulk" onclick="setMutabaahMode('bulk')" class="flex-1 py-2 rounded-lg bg-brand-600 text-white shadow-sm">
-          👥 Input Masal (Bulk Kelas)
-        </button>
-        <button id="btn-mode-single" onclick="setMutabaahMode('single')" class="flex-1 py-2 rounded-lg text-slate-400 hover:text-white">
-          👤 Per Siswa
-        </button>
-      </div>
-
-      <!-- FORM BULK INPUT (MASAL SATU KELAS) -->
-      <div id="form-bulk-mutabaah" class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3.5 shadow-sm text-xs">
-        <div class="border-b border-slate-800 pb-2 flex justify-between items-center">
-          <div>
-            <h3 class="font-bold text-sm text-brand-400">Pencatatan Masal Harian Kelas IV</h3>
-            <p class="text-[11px] text-slate-400">Default: Seluruh siswa shalat Dzuhur berjamaah & beradab baik</p>
-          </div>
-          <button onclick="fetchSiswaGuru()" class="text-[11px] text-brand-400 font-semibold">
-            <i class="fa-solid fa-rotate mr-1"></i> Refresh Siswa
-          </button>
-        </div>
-
-        <div>
-          <label class="block font-semibold text-slate-300 mb-1">Tanggal Kegiatan</label>
-          <input type="date" id="bulk-tanggal" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-        </div>
-
-        <!-- LIST CONTAINER DINAMIS SISWA BULK -->
-        <div id="bulk-siswa-container" class="space-y-3 pt-2">
-          <div class="text-center text-slate-500 py-4">Memuat daftar siswa...</div>
-        </div>
-
-        <button onclick="submitMutabaahBulk()" id="btn-submit-bulk" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
-          <i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Simpan Mutaba'ah Masal Kelas
-        </button>
-      </div>
-
-      <!-- FORM SINGLE INPUT (PER SISWA) -->
-      <div id="form-single-mutabaah" class="hidden bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3.5 shadow-sm text-xs">
-        <h3 class="font-bold text-sm text-brand-400 border-b border-slate-800 pb-2">Catatan Evaluasi Per Siswa</h3>
-        <form onsubmit="handlePostSingleMutabaah(event)" class="space-y-3">
-          <div>
-            <label class="block font-semibold text-slate-300 mb-1">Pilih Siswa</label>
-            <select id="m-siswa" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
-              <option value="">-- Pilih Siswa --</option>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Mata Pelajaran</label>
+            <select id="m-mapel" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
+              <option value="Matematika">Matematika</option>
+              <option value="IPAS">IPAS</option>
+              <option value="PAI">PAI</option>
+              <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+              <option value="Bahasa Inggris">Bahasa Inggris</option>
             </select>
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Tanggal</label>
-            <input type="date" id="m-tanggal" required class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white">
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-semibold text-slate-300 mb-1">Shalat Dzuhur</label>
-              <select id="m-dzuhur" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white">
-                <option value="Berjamaah">🕌 Berjamaah</option>
-                <option value="Munfarid">👤 Munfarid</option>
-                <option value="Tidak">❌ Tidak Shalat</option>
-              </select>
-            </div>
-            <div>
-              <label class="block font-semibold text-slate-300 mb-1">Adab & Karakter</label>
-              <select id="m-adab" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-white">
-                <option value="Sangat Baik">🌟 Sangat Baik</option>
-                <option value="Baik">👍 Baik</option>
-                <option value="Perlu Bimbingan">⚠️ Perlu Bimbingan</option>
-              </select>
-            </div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Judul Materi</label>
+            <input type="text" id="m-judul" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Capaian Tilawah / Hafalan</label>
-            <input type="text" id="m-tilawah" placeholder="Contoh: Surah Al-Inshiqaq 1-15" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white">
+            <label class="block text-xs font-bold text-slate-600 mb-1">Link Video YouTube</label>
+            <input type="url" id="m-url" placeholder="https://www.youtube.com/watch?v=..." required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
           </div>
           <div>
-            <label class="block font-semibold text-slate-300 mb-1">Catatan Khusus Wali Kelas</label>
-            <textarea id="m-catatan" rows="2" placeholder="Tuliskan apresiasi atau poin evaluasi..." class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-white"></textarea>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Deskripsi Singkat</label>
+            <textarea id="m-deskripsi" rows="2" class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none"></textarea>
           </div>
-          <button type="submit" id="btn-post-single-m" class="w-full bg-gradient-to-r from-brand-600 to-emerald-600 hover:from-brand-500 hover:to-emerald-500 text-white font-bold py-3 rounded-xl shadow-md transition-all active:scale-[0.98]">
-            <i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Catatan Siswa
-          </button>
+          <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Simpan Materi</button>
         </form>
       </div>
-    </section>
+    </div>
 
-    <!-- TAB 4: PERIZINAN SISWA -->
-    <section id="sec-guru-izin" class="hidden space-y-3">
-      <div class="flex justify-between items-center px-1">
-        <h3 class="font-bold text-xs text-slate-300">Daftar Surat Izin / Sakit dari Ortu</h3>
-        <button onclick="fetchIzinGuru()" class="text-[11px] text-brand-400 hover:text-brand-300 font-semibold">
-          <i class="fa-solid fa-rotate mr-1"></i> Refresh
-        </button>
-      </div>
-      <div id="guru-list-izin" class="space-y-2.5">
-        <div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800">Memuat surat izin...</div>
-      </div>
-    </section>
-
-    <!-- TAB 5: REKAPITULASI & DATABANK -->
-    <section id="sec-guru-rekap" class="hidden space-y-4">
-      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-sm text-xs">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-sm text-brand-400">Riwayat Mutaba'ah Terbaru</h3>
-          <button onclick="fetchRekapGuru()" class="text-[11px] text-brand-400 font-semibold">
-            <i class="fa-solid fa-rotate mr-1"></i> Refresh
-          </button>
-        </div>
-        <div id="guru-list-rekap" class="space-y-2">
-          <div class="text-center text-slate-500 py-4 text-xs">Memuat rekap mutaba'ah...</div>
-        </div>
-      </div>
-
-      <!-- BUKU KONTAK LOGIN ORTU -->
-      <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 space-y-3 shadow-sm text-xs">
-        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-          <h3 class="font-bold text-sm text-slate-200">Daftar ID & PIN Login Orang Tua</h3>
-          <button onclick="fetchSiswaGuru()" class="text-[11px] text-brand-400 font-semibold">
-            <i class="fa-solid fa-rotate mr-1"></i> Refresh
-          </button>
-        </div>
-        <div id="guru-list-siswa-pin" class="space-y-2">
-          <div class="text-center text-slate-500 py-2">Memuat akun siswa...</div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- MODAL CONFIG PENGATURAN URL GAS -->
-  <div id="modal-config" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-slate-900 text-slate-100 max-w-sm w-full p-5 rounded-3xl border border-slate-800 shadow-2xl space-y-4">
-      <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-        <h3 class="font-bold text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-sliders text-brand-500"></i> Pengaturan Web App GAS
-        </h3>
-        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
-      </div>
-      <div class="space-y-2 text-xs">
-        <label class="block text-slate-400 font-semibold">URL Web App Google Apps Script</label>
-        <input type="url" id="cfg-gas-url" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs font-mono text-white focus:ring-2 focus:ring-brand-500 outline-none">
-        <p class="text-[10px] text-slate-500">Masukkan URL Web App dari deployment Apps Script Google Spreadsheets Anda.</p>
-      </div>
-      <div class="flex space-x-2 pt-2">
-        <button onclick="saveGasConfig()" class="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-bold py-2.5 rounded-xl text-xs shadow-md">Simpan Konfigurasi</button>
-        <button onclick="closeConfigModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-xs">Batal</button>
+    <!-- TAB 3: MUTABAAH -->
+    <div id="sec-mutabaah" class="space-y-6 hidden">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-lg text-teal-800 mb-3">Input Mutaba'ah Siswa</h3>
+        <form onsubmit="handleMutabaahGuru(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal</label>
+            <input type="date" id="mg-tanggal" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Siswa</label>
+            <select id="mg-siswa" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none">
+              <option value="">-- Memuat Daftar Siswa --</option>
+            </select>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-subuh" checked> <span>Subuh</span></label>
+            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-dzuhur" checked> <span>Dzuhur</span></label>
+            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-ashar" checked> <span>Ashar</span></label>
+            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-maghrib" checked> <span>Maghrib</span></label>
+            <label class="flex items-center space-x-2 bg-slate-50 p-2 rounded border"><input type="checkbox" id="mg-isya" checked> <span>Isya</span></label>
+          </div>
+          <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Simpan Data Mutaba'ah</button>
+        </form>
       </div>
     </div>
-  </div>
+
+    <!-- TAB 4: PERIZINAN -->
+    <div id="sec-perizinan" class="space-y-6 hidden">
+      <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+        <h3 class="font-bold text-lg text-teal-800 mb-3">Daftar Surat Izin Masuk</h3>
+        <div id="list-perizinan" class="space-y-3">
+          <p class="text-sm text-slate-500">Memuat data perizinan...</p>
+        </div>
+      </div>
+    </div>
+  </main>
 
   <script>
-    // KONFIGURASI URL GAS UTAMA
-    const DEFAULT_GAS_URL = "PRODUKSI_URL_GAS_DI_SINI";
-    let GAS_URL = localStorage.getItem('SDIT_IQRA_GAS_URL') || DEFAULT_GAS_URL;
-    let LIST_SISWA_CACHE = [];
+    const API_URL = "https://script.google.com/macros/s/AKfycbwVmfmObDSAeEHPEoRIysEDZkl_1vZtfhgp8WCVADMnwJOmT8yMdnl07JmTqRDtyrq8UA/exec";
 
-    function isValidGasUrl(url) {
-      return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
-    }
-
-function formatDateIndo(dateStr) {
-  if (!dateStr || dateStr === '-') return '-';
-  
-  // Ambil hanya karakter YYYY-MM-DD (mengabaikan jam/UTC offset)
-  let cleanStr = String(dateStr).trim();
-  if (cleanStr.includes('T')) {
-    cleanStr = cleanStr.split('T')[0];
-  }
-  
-  const parts = cleanStr.split('-');
-  if (parts.length === 3) {
-    const year = parseInt(parts[0], 10);
-    const month = parseInt(parts[1], 10) - 1;
-    const day = parseInt(parts[2], 10);
-    
-    // Gunakan constructor Date(year, month, day) untuk waktu LOKAL pengguna
-    const date = new Date(year, month, day);
-    return date.toLocaleDateString('id-ID', { 
-      weekday: 'short', 
-      day: 'numeric', 
-      month: 'short', 
-      year: 'numeric' 
-    });
-  }
-  
-  return dateStr;
-}
-  
-  // Fallback untuk objek Date biasa
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('id-ID', { 
-    weekday: 'short', 
-    day: 'numeric', 
-    month: 'short', 
-    year: 'numeric' 
-  });
-}
-
-    function initDates() {
-      const todayStr = getTodayIso();
-      const elM = document.getElementById('m-tanggal');
-      const elBulk = document.getElementById('bulk-tanggal');
-      const elP = document.getElementById('p-tanggal');
-      const elMat = document.getElementById('mat-tanggal');
-      
-      if (elM) elM.value = todayStr;
-      if (elBulk) elBulk.value = todayStr;
-      if (elP) elP.value = todayStr;
-      if (elMat) elMat.value = todayStr;
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      initDates();
-      fetchPengumumanGuru();
-      fetchSiswaGuru();
+    document.addEventListener("DOMContentLoaded", () => {
+      document.getElementById('mg-tanggal').value = new Date().toISOString().split('T')[0];
+      fetchSiswa();
+      fetchPerizinan();
     });
 
-    // FUNGSI LOAD SISWA DINAMIS UNTUK GURU
-    async function fetchSiswaGuru() {
-      const containerBulk = document.getElementById('bulk-siswa-container');
-      const selectSingle = document.getElementById('m-siswa');
-      const containerPin = document.getElementById('guru-list-siswa-pin');
-
-      // Default Dummy Siswa jika GAS URL offline
-      const defaultSiswa = [
-        { id: "S001", nama: "Ahmad Fauzi", pin: "1234", ortu: "Bapak Budi" },
-        { id: "S002", nama: "Aisyah Nurul Rahma", pin: "5678", ortu: "Ibu Siti" },
-        { id: "S003", nama: "Bilal Al-Ghifari", pin: "1122", ortu: "Bapak Ahmad" }
-      ];
-
-      let dataSiswa = defaultSiswa;
-
-      if (isValidGasUrl(GAS_URL)) {
-        try {
-          const res = await fetch(`${GAS_URL}?action=getSiswa`);
-          const json = await res.json();
-          if (json.data && json.data.length > 0) {
-            dataSiswa = json.data;
-          }
-        } catch (e) {
-          console.warn("Gagal memuat siswa dari GAS, menggunakan data fallback.");
-        }
-      }
-
-      LIST_SISWA_CACHE = dataSiswa;
-
-      // Render Bulk Form
-      if (containerBulk) {
-        containerBulk.innerHTML = dataSiswa.map(s => `
-          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 space-y-2">
-            <div class="flex justify-between items-center">
-              <span class="font-bold text-white">${s.id} - ${s.nama}</span>
-              <span class="text-[10px] text-brand-400 bg-brand-950 border border-brand-800 px-2 py-0.5 rounded-md">Siswa</span>
-            </div>
-            <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <div>
-                <span class="text-slate-400 block mb-0.5">Shalat Dzuhur</span>
-                <select id="bulk-dzuhur-${s.id}" class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-                  <option value="Berjamaah">🕌 Berjamaah</option>
-                  <option value="Munfarid">👤 Munfarid</option>
-                  <option value="Tidak">❌ Tidak Shalat</option>
-                </select>
-              </div>
-              <div>
-                <span class="text-slate-400 block mb-0.5">Tilawah & Hafalan</span>
-                <input type="text" id="bulk-tilawah-${s.id}" placeholder="Capain hari ini..." class="w-full bg-slate-900 border border-slate-800 rounded-lg p-1.5 text-white">
-              </div>
-            </div>
-          </div>
-        `).join('');
-      }
-
-      // Render Dropdown Single Form
-      if (selectSingle) {
-        selectSingle.innerHTML = '<option value="">-- Pilih Siswa --</option>' + 
-          dataSiswa.map(s => `<option value="${s.id}">${s.id} - ${s.nama}</option>`).join('');
-      }
-
-      // Render List PIN Login
-      if (containerPin) {
-        containerPin.innerHTML = dataSiswa.map(s => `
-          <div class="flex justify-between items-center p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-            <div>
-              <p class="font-bold text-white">${s.id} - ${s.nama}</p>
-              <p class="text-[10px] text-slate-500">Ortu: ${s.ortu || '-'}</p>
-            </div>
-            <span class="px-2.5 py-1 bg-slate-900 border border-slate-800 font-mono font-bold text-emerald-400 rounded-lg">PIN: ${s.pin}</span>
-          </div>
-        `).join('');
-      }
-    }
-
-    function openConfigModal() {
-      document.getElementById('cfg-gas-url').value = GAS_URL.includes('PRODUKSI_URL_GAS_DI_SINI') ? '' : GAS_URL;
-      document.getElementById('modal-config').classList.remove('hidden');
-    }
-
-    function closeConfigModal() {
-      document.getElementById('modal-config').classList.add('hidden');
-    }
-
-    function saveGasConfig() {
-      const input = document.getElementById('cfg-gas-url').value.trim();
-      if (input) {
-        GAS_URL = input;
-        localStorage.setItem('SDIT_IQRA_GAS_URL', input);
-        alert('URL Konfigurasi GAS berhasil disimpan!');
-      }
-      closeConfigModal();
-    }
-
-    function switchGuruTab(t) {
-      const tabs = ['pengumuman', 'materi', 'mutabaah', 'izin', 'rekap'];
-      tabs.forEach(tab => {
-        const sec = document.getElementById(`sec-guru-${tab}`);
-        const btn = document.getElementById(`btn-guru-${tab}`);
-        if(tab === t) {
-          sec.classList.remove('hidden');
-          btn.className = "py-2.5 rounded-xl bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-bold text-[10px] shadow transition-all";
-          if(t === 'izin') fetchIzinGuru();
-          if(t === 'pengumuman') fetchPengumumanGuru();
-          if(t === 'materi') fetchMateriGuru();
-          if(t === 'rekap') fetchRekapGuru();
+    function switchTab(tab) {
+      ['pengumuman', 'materi', 'mutabaah', 'perizinan'].forEach(t => {
+        document.getElementById(`sec-${t}`).classList.toggle('hidden', t !== tab);
+        const btn = document.getElementById(`tab-${t}`);
+        if(t === tab) {
+          btn.className = "px-4 py-2 font-semibold rounded-lg bg-teal-700 text-white text-sm whitespace-nowrap";
         } else {
-          sec.classList.add('hidden');
-          btn.className = "py-2.5 rounded-xl text-slate-400 hover:text-slate-200 font-semibold text-[10px] transition-all";
+          btn.className = "px-4 py-2 font-semibold rounded-lg bg-white text-slate-600 text-sm whitespace-nowrap";
         }
       });
     }
 
-    function setMutabaahMode(mode) {
-      const fBulk = document.getElementById('form-bulk-mutabaah');
-      const fSingle = document.getElementById('form-single-mutabaah');
-      const btnBulk = document.getElementById('btn-mode-bulk');
-      const btnSingle = document.getElementById('btn-mode-single');
-
-      if (mode === 'bulk') {
-        fBulk.classList.remove('hidden');
-        fSingle.classList.add('hidden');
-        btnBulk.className = "flex-1 py-2 rounded-lg bg-brand-600 text-white shadow-sm font-bold";
-        btnSingle.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-semibold";
-      } else {
-        fBulk.classList.add('hidden');
-        fSingle.classList.remove('hidden');
-        btnSingle.className = "flex-1 py-2 rounded-lg bg-brand-600 text-white shadow-sm font-bold";
-        btnBulk.className = "flex-1 py-2 rounded-lg text-slate-400 hover:text-white font-semibold";
+    function formatDateIndo(dateStr) {
+      if (!dateStr || dateStr === '-') return '-';
+      let cleanStr = String(dateStr).trim();
+      if (cleanStr.includes('T')) cleanStr = cleanStr.split('T')[0];
+      const parts = cleanStr.split('-');
+      if (parts.length === 3) {
+        return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10))
+          .toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
       }
+      return dateStr;
     }
 
-    // --- API HANDLERS ---
-    async function handlePostPengumuman(e) {
+    async function fetchSiswa() {
+      try {
+        const res = await fetch(`${API_URL}?action=getSiswa`);
+        const data = await res.json();
+        const sel = document.getElementById('mg-siswa');
+        sel.innerHTML = '<option value="">-- Pilih Siswa --</option>';
+        data.forEach(s => {
+          sel.innerHTML += `<option value="${s.id}">${s.id} - ${s.nama}</option>`;
+        });
+      } catch(e) { console.error(e); }
+    }
+
+    async function handlePengumuman(e) {
       e.preventDefault();
-      if (!isValidGasUrl(GAS_URL)) {
-        alert('URL Google Apps Script belum diatur! Silakan atur terlebih dahulu melalui menu Pengaturan ⚙️.');
-        openConfigModal();
-        return;
-      }
-
-      const btn = document.getElementById('btn-post-p');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Mengirim...`;
-
       const payload = {
         action: 'addPengumuman',
-        kategori: document.getElementById('p-kategori').value,
-        tanggal: document.getElementById('p-tanggal').value,
         judul: document.getElementById('p-judul').value,
-        isi: document.getElementById('p-isi').value
+        konten: document.getElementById('p-konten').value
       };
-
-      try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        alert('Pengumuman berhasil dipublikasikan!');
-        e.target.reset();
-        initDates();
-        fetchPengumumanGuru();
-      } catch (err) {
-        alert('Gagal mengirim pengumuman.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-paper-plane mr-1.5"></i> Publikasikan Pengumuman`;
-      }
+      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      alert('Pengumuman Berhasil Dipublikasikan!');
+      e.target.reset();
     }
 
-    async function fetchPengumumanGuru() {
-      const container = document.getElementById('guru-list-pengumuman');
-      if (!isValidGasUrl(GAS_URL)) {
-        container.innerHTML = `<div class="text-center text-amber-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">⚠️ URL GAS Belum Diatur. Klik ⚙️ di pojok kanan atas untuk menyetting URL API.</div>`;
-        return;
-      }
-
-      try {
-        const res = await fetch(`${GAS_URL}?action=getPengumuman`);
-        const json = await res.json();
-
-        if (!json.data || json.data.length === 0) {
-          container.innerHTML = `<div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800">Belum ada pengumuman yang diterbitkan.</div>`;
-          return;
-        }
-
-        container.innerHTML = json.data.map(p => `
-          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-1.5 text-xs">
-            <div class="flex justify-between items-center text-[10px]">
-              <span class="bg-brand-950 text-brand-400 border border-brand-800 px-2 py-0.5 rounded-full font-bold">${p.Kategori || 'Penting'}</span>
-              <span class="text-slate-500">${formatDateIndo(p.Tanggal)}</span>
-            </div>
-            <h4 class="font-bold text-white text-sm">${p.Judul}</h4>
-            <p class="text-slate-300 text-[11px] leading-relaxed whitespace-pre-line">${p.Isi_Pengumuman || p.Isi || ''}</p>
-          </div>
-        `).join('');
-      } catch (err) {
-        container.innerHTML = `<div class="text-center text-rose-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">Gagal mengambil pengumuman.</div>`;
-      }
-    }
-
-    async function handlePostMateri(e) {
+    async function handleMateri(e) {
       e.preventDefault();
-      if (!isValidGasUrl(GAS_URL)) {
-        alert('URL Google Apps Script belum diatur! Silakan atur terlebih dahulu melalui menu ⚙️.');
-        openConfigModal();
-        return;
-      }
-
-      const btn = document.getElementById('btn-post-materi');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
-
       const payload = {
         action: 'addMateri',
-        mapel: document.getElementById('mat-mapel').value,
-        tanggal: document.getElementById('mat-tanggal').value,
-        judul: document.getElementById('mat-judul').value,
-        url_video: document.getElementById('mat-url').value,
-        deskripsi: document.getElementById('mat-deskripsi').value
+        mapel: document.getElementById('m-mapel').value,
+        judul: document.getElementById('m-judul').value,
+        videoUrl: document.getElementById('m-url').value,
+        deskripsi: document.getElementById('m-deskripsi').value
       };
-
-      try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        alert('Materi video pembelajaran berhasil diterbitkan!');
-        e.target.reset();
-        initDates();
-        fetchMateriGuru();
-      } catch (err) {
-        alert('Gagal menyimpan materi pembelajaran.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Simpan & Publis Materi Video`;
-      }
+      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      alert('Materi Berhasil Ditambahkan!');
+      e.target.reset();
     }
 
-    async function fetchMateriGuru() {
-      const container = document.getElementById('guru-list-materi');
-      if (!isValidGasUrl(GAS_URL)) {
-        container.innerHTML = `<div class="text-center text-amber-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">⚠️ URL GAS Belum Diatur.</div>`;
-        return;
-      }
-
-      try {
-        const res = await fetch(`${GAS_URL}?action=getMateri`);
-        const json = await res.json();
-        if (!json.data || json.data.length === 0) {
-          container.innerHTML = `<div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800">Belum ada materi pembelajaran diterbitkan.</div>`;
-          return;
-        }
-
-        container.innerHTML = json.data.map(m => `
-          <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
-            <div class="flex justify-between items-center">
-              <span class="bg-emerald-950 text-emerald-400 border border-emerald-800 text-[10px] px-2.5 py-0.5 rounded-full font-bold">${m.Mapel}</span>
-              <span class="text-[10px] text-slate-500">${formatDateIndo(m.Tanggal)}</span>
-            </div>
-            <h4 class="font-bold text-white text-sm">${m.Judul}</h4>
-            <p class="text-slate-400 text-[11px] leading-relaxed">${m.Deskripsi || '-'}</p>
-            <a href="${m.Url_Video}" target="_blank" class="inline-flex items-center gap-1.5 text-[11px] font-bold text-brand-400 hover:underline pt-1">
-              <i class="fa-solid fa-circle-play text-red-500 text-sm"></i> Tonton Video Pembelajaran
-            </a>
-          </div>
-        `).join('');
-      } catch (e) {
-        container.innerHTML = `<div class="text-center text-rose-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">Gagal mengambil materi.</div>`;
-      }
-    }
-
-    async function submitMutabaahBulk() {
-      if (!isValidGasUrl(GAS_URL)) {
-        alert('URL Apps Script belum dikonfigurasi!');
-        openConfigModal();
-        return;
-      }
-
-      const btn = document.getElementById('btn-submit-bulk');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
-
-      const tgl = document.getElementById('bulk-tanggal').value;
-      const siswaList = LIST_SISWA_CACHE.length > 0 ? LIST_SISWA_CACHE.map(s => s.id) : ['S001', 'S002', 'S003'];
-
-      try {
-        for (const sId of siswaList) {
-          const elDzuhur = document.getElementById(`bulk-dzuhur-${sId}`);
-          const elTilawah = document.getElementById(`bulk-tilawah-${sId}`);
-          
-          const payload = {
-            action: 'addMutabaah',
-            id_siswa: sId,
-            tanggal: tgl,
-            dzuhur: elDzuhur ? elDzuhur.value : 'Berjamaah',
-            tilawah: (elTilawah && elTilawah.value) ? elTilawah.value : 'Sesuai Target',
-            sumber: 'Sekolah'
-          };
-
-          await fetch(GAS_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-          });
-        }
-        alert('Mutabaah masal kelas berhasil disimpan!');
-      } catch (err) {
-        alert('Gagal menyimpan mutabaah masal.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up mr-1.5"></i> Simpan Mutaba'ah Masal Kelas`;
-      }
-    }
-
-    async function handlePostSingleMutabaah(e) {
+    async function handleMutabaahGuru(e) {
       e.preventDefault();
-      if (!isValidGasUrl(GAS_URL)) {
-        alert('URL Google Apps Script belum dikonfigurasi!');
-        return;
-      }
-
-      const btn = document.getElementById('btn-post-single-m');
-      btn.disabled = true;
-      btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin mr-1"></i> Menyimpan...`;
-
       const payload = {
         action: 'addMutabaah',
-        id_siswa: document.getElementById('m-siswa').value,
-        tanggal: document.getElementById('m-tanggal').value,
-        dzuhur: document.getElementById('m-dzuhur').value,
-        adab: document.getElementById('m-adab').value,
-        tilawah: document.getElementById('m-tilawah').value,
-        catatan: document.getElementById('m-catatan').value,
-        sumber: 'Sekolah'
+        tanggal: document.getElementById('mg-tanggal').value,
+        siswaId: document.getElementById('mg-siswa').value,
+        subuh: document.getElementById('mg-subuh').checked ? 'Ya' : 'Belum',
+        dzuhur: document.getElementById('mg-dzuhur').checked ? 'Ya' : 'Belum',
+        ashar: document.getElementById('mg-ashar').checked ? 'Ya' : 'Belum',
+        maghrib: document.getElementById('mg-maghrib').checked ? 'Ya' : 'Belum',
+        isya: document.getElementById('mg-isya').checked ? 'Ya' : 'Belum'
       };
-
-      try {
-        await fetch(GAS_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        alert('Catatan mutaba\'ah siswa berhasil disimpan!');
-        e.target.reset();
-        initDates();
-      } catch (err) {
-        alert('Gagal menyimpan mutaba\'ah.');
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = `<i class="fa-solid fa-floppy-disk mr-1.5"></i> Simpan Catatan Siswa`;
-      }
+      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+      alert('Data Mutabaah Berhasil Disimpan!');
     }
 
-    async function fetchIzinGuru() {
-      const container = document.getElementById('guru-list-izin');
-      if (!isValidGasUrl(GAS_URL)) {
-        container.innerHTML = `<div class="text-center text-amber-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">⚠️ Atur URL GAS untuk melihat surat izin dari orang tua.</div>`;
-        return;
-      }
-
+    async function fetchPerizinan() {
       try {
-        const res = await fetch(`${GAS_URL}?action=getIzin`);
-        const json = await res.json();
-
-        if (!json.data || json.data.length === 0) {
-          container.innerHTML = `<div class="text-center text-slate-500 py-6 text-xs bg-slate-900 rounded-2xl border border-slate-800">Belum ada surat izin yang masuk.</div>`;
-          return;
-        }
-
-        container.innerHTML = json.data.map(i => `
-          <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-800 space-y-2 text-xs">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-              <span class="font-bold text-white">${i.Nama_Siswa} (${i.ID_Siswa})</span>
-              <span class="px-2 py-0.5 rounded-full text-[10px] font-bold ${i.Kategori === 'Sakit' ? 'bg-rose-950 text-rose-400 border border-rose-800' : 'bg-amber-950 text-amber-400 border border-amber-800'}">
-                ${i.Kategori}
-              </span>
+        const res = await fetch(`${API_URL}?action=getPerizinan`);
+        const data = await res.json();
+        const container = document.getElementById('list-perizinan');
+        if(!data.length) { container.innerHTML = '<p class="text-sm text-slate-500">Belum ada surat izin.</p>'; return; }
+        container.innerHTML = data.map(item => `
+          <div class="p-3 border rounded-lg bg-slate-50 text-sm">
+            <div class="flex justify-between font-bold text-slate-700">
+              <span>${item.namaSiswa} (${item.siswaId})</span>
+              <span class="text-xs text-teal-600 bg-teal-50 px-2 py-0.5 rounded">${formatDateIndo(item.tanggal)}</span>
             </div>
-            <p class="text-[11px] text-slate-400">📅 <b>Tanggal:</b> ${formatDateIndo(i.Tgl_Mulai)} s/d ${formatDateIndo(i.Tgl_Selesai)}</p>
-            <p class="p-2 bg-slate-950 rounded-lg text-slate-300 text-[11px] border border-slate-800">💬 <b>Alasan:</b> ${i.Alasan}</p>
+            <div class="text-xs font-semibold text-amber-600 mt-1">Jenis: ${item.jenis}</div>
+            <p class="text-xs text-slate-600 mt-1">${item.alasan}</p>
           </div>
         `).join('');
-      } catch (err) {
-        container.innerHTML = `<div class="text-center text-rose-400 py-4 text-xs bg-slate-900 rounded-2xl border border-slate-800">Gagal memuat surat izin.</div>`;
-      }
-    }
-
-    async function fetchRekapGuru() {
-      const container = document.getElementById('guru-list-rekap');
-      if (!isValidGasUrl(GAS_URL)) {
-        container.innerHTML = `<div class="text-center text-amber-400 py-4 text-xs">⚠️ URL GAS Belum Diatur.</div>`;
-        return;
-      }
-
-      try {
-        const res = await fetch(`${GAS_URL}?action=getMutabaah&id_siswa=ALL`);
-        const json = await res.json();
-
-        if (!json.data || json.data.length === 0) {
-          container.innerHTML = `<div class="text-center text-slate-500 py-4 text-xs">Belum ada rekap mutaba'ah.</div>`;
-          return;
-        }
-
-        container.innerHTML = json.data.slice(0, 10).map(r => `
-          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex justify-between items-center text-[11px]">
-            <div>
-              <p class="font-bold text-white">${r.ID_Siswa} • ${formatDateIndo(r.Tanggal)}</p>
-              <p class="text-slate-400">Dzuhur: ${r.Dzuhur || '-'} | Tilawah: ${r.Tilawah_Surah || r.Tilawah || '-'}</p>
-            </div>
-            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${r.Sumber === 'Sekolah' ? 'bg-blue-950 text-blue-400 border border-blue-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">
-              ${r.Sumber || 'Sekolah'}
-            </span>
-          </div>
-        `).join('');
-      } catch (e) {
-        container.innerHTML = `<div class="text-center text-rose-400 py-4 text-xs">Gagal mengambil rekap.</div>`;
-      }
+      } catch(e) { console.error(e); }
     }
   </script>
 </body>
