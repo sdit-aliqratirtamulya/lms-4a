@@ -5,98 +5,166 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LMS Orang Tua - SD IT AL-IQRA</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" type="text/css">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+  </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen">
+<body class="bg-slate-950 text-slate-100 min-h-screen">
 
   <!-- LOGIN SCREEN -->
   <div id="login-screen" class="flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm border border-slate-200 text-center">
-      <div class="w-16 h-16 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">📖</div>
-      <h2 class="text-xl font-bold text-teal-800">SD IT AL-IQRA</h2>
-      <p class="text-xs text-slate-500 mb-6">Portal Orang Tua & Siswa</p>
+    <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-sm border border-slate-800 text-center space-y-5">
+      <div class="w-20 h-20 bg-slate-950 border border-emerald-500/40 rounded-2xl flex items-center justify-center mx-auto p-2 shadow-inner overflow-hidden">
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23064e3b' rx='20'/><text x='50%' y='55%' fill='%2334d399' font-size='22' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>SDIT</text></svg>" alt="Logo SD IT AL-IQRA" class="w-full h-full object-contain">
+      </div>
+      <div>
+        <h2 class="text-xl font-bold text-emerald-400">SD IT AL-IQRA</h2>
+        <p class="text-xs text-slate-400">Portal Orang Tua & Siswa Kelas IV</p>
+      </div>
       
       <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">ID Siswa (contoh: S001)</label>
-          <input type="text" id="login-id" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-teal-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">ID Siswa (Contoh: S001)</label>
+          <input type="text" id="login-id" required placeholder="Masukkan ID Siswa" class="w-full p-3 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 uppercase transition">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">PIN Login</label>
-          <input type="password" id="login-pin" required class="w-full p-2.5 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-teal-500">
+          <label class="block text-xs font-bold text-slate-300 mb-1.5">PIN Rahasia Orang Tua</label>
+          <input type="password" id="login-pin" required placeholder="••••" class="w-full p-3 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl text-xs outline-none focus:ring-2 focus:ring-emerald-500 transition">
         </div>
-        <button type="submit" class="w-full bg-teal-600 text-white py-2.5 rounded-lg font-bold text-sm hover:bg-teal-700">Masuk Aplikasi</button>
+        <button type="submit" id="btn-login" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold text-xs shadow-lg shadow-emerald-950 transition-all">Masuk Akun Siswa</button>
       </form>
     </div>
   </div>
 
-  <!-- MAIN APP SCREEN -->
+  <!-- APP MAIN SCREEN -->
   <div id="app-screen" class="hidden pb-20">
-    <nav class="bg-teal-700 text-white p-4 sticky top-0 z-50 shadow-md">
+    <nav class="bg-slate-900/90 backdrop-blur border-b border-slate-800 text-white p-4 sticky top-0 z-50 shadow-md">
       <div class="max-w-md mx-auto flex justify-between items-center">
-        <div>
-          <h1 id="user-nama" class="font-bold text-base">Nama Siswa</h1>
-          <p id="user-id" class="text-xs text-teal-200">ID: -</p>
+        <div class="flex items-center space-x-3">
+          <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23064e3b' rx='10'/><text x='50%' y='55%' fill='%2334d399' font-size='22' font-weight='bold' text-anchor='middle' dominant-baseline='middle'>SDIT</text></svg>" alt="Logo Sekolah" class="w-9 h-9 object-contain rounded-lg bg-slate-950 p-1 border border-slate-700">
+          <div>
+            <h1 id="user-nama" class="font-bold text-base leading-tight text-emerald-400">Nama Siswa</h1>
+            <p id="user-id" class="text-xs text-slate-400">ID: -</p>
+          </div>
         </div>
-        <button onclick="logout()" class="text-xs bg-teal-800 px-3 py-1.5 rounded-lg border border-teal-500">Keluar</button>
+        <button onclick="logout()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg border border-slate-700 font-semibold text-slate-300">Keluar</button>
       </div>
     </nav>
 
-    <main class="max-w-md mx-auto p-4 space-y-6">
+    <main class="max-w-md mx-auto p-4 space-y-5">
       <!-- Navigasi Tab -->
-      <div class="flex space-x-2 border-b border-slate-300 pb-2 overflow-x-auto">
-        <button onclick="switchTabOrtu('pengumuman')" id="tabo-pengumuman" class="px-3 py-1.5 font-semibold rounded-lg bg-teal-700 text-white text-xs whitespace-nowrap">📢 Pengumuman</button>
-        <button onclick="switchTabOrtu('materi')" id="tabo-materi" class="px-3 py-1.5 font-semibold rounded-lg bg-white text-slate-600 text-xs whitespace-nowrap">📚 Materi</button>
-        <button onclick="switchTabOrtu('mutabaah')" id="tabo-mutabaah" class="px-3 py-1.5 font-semibold rounded-lg bg-white text-slate-600 text-xs whitespace-nowrap">📝 Mutaba'ah</button>
-        <button onclick="switchTabOrtu('izin')" id="tabo-izin" class="px-3 py-1.5 font-semibold rounded-lg bg-white text-slate-600 text-xs whitespace-nowrap">✉️ Kirim Izin</button>
+      <div class="flex space-x-1.5 border-b border-slate-800 pb-2 overflow-x-auto">
+        <button id="tabo-pengumuman" onclick="switchTabOrtu('pengumuman')" class="px-3.5 py-2 font-bold rounded-xl bg-emerald-600 text-white text-xs whitespace-nowrap shadow-md">📢 Info</button>
+        <button id="tabo-materi" onclick="switchTabOrtu('materi')" class="px-3.5 py-2 font-semibold rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs whitespace-nowrap hover:bg-slate-800">📚 Materi</button>
+        <button id="tabo-mutabaah" onclick="switchTabOrtu('mutabaah')" class="px-3.5 py-2 font-semibold rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs whitespace-nowrap hover:bg-slate-800">📝 Mutaba'ah</button>
+        <button id="tabo-izin" onclick="switchTabOrtu('izin')" class="px-3.5 py-2 font-semibold rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs whitespace-nowrap hover:bg-slate-800">✉️ Izin</button>
       </div>
 
-      <!-- TAB PENGUMUMAN -->
-      <div id="seco-pengumuman" class="space-y-4">
-        <div id="list-pengumuman" class="space-y-3">
-          <p class="text-xs text-slate-500">Memuat pengumuman...</p>
+      <!-- TAB 1: PENGUMUMAN -->
+      <div id="seco-pengumuman" class="space-y-3">
+        <div id="list-pengumuman" class="space-y-3 text-xs">
+          <p class="text-slate-500">Memuat pengumuman...</p>
         </div>
       </div>
 
-      <!-- TAB MATERI -->
+      <!-- TAB 2: MATERI PEMBELAJARAN VIDEO -->
       <div id="seco-materi" class="space-y-4 hidden">
-        <div id="list-materi" class="space-y-4">
-          <p class="text-xs text-slate-500">Memuat materi pembelajaran...</p>
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-3 text-xs">
+          <label class="block font-bold text-slate-300">Filter Mata Pelajaran:</label>
+          <select id="filter-mapel" onchange="loadMateri(this.value)" class="w-full p-3 bg-slate-950 border border-slate-700 text-slate-200 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+            <option value="ALL">🌟 Semua Mata Pelajaran</option>
+            <option value="Matematika">Matematika</option>
+            <option value="IPAS">IPAS</option>
+            <option value="PAI">PAI</option>
+            <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+            <option value="Bahasa Inggris">Bahasa Inggris</option>
+          </select>
+        </div>
+
+        <div id="list-materi" class="space-y-4 text-xs">
+          <p class="text-slate-500">Memuat materi pembelajaran...</p>
         </div>
       </div>
 
-      <!-- TAB MUTABAAH -->
+      <!-- TAB 3: MUTABAAH -->
       <div id="seco-mutabaah" class="space-y-4 hidden">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <h3 class="font-bold text-sm text-teal-800 mb-2">Riwayat Mutaba'ah Harian</h3>
-          <div id="list-mutabaah" class="space-y-3">
-            <p class="text-xs text-slate-500">Memuat data mutaba'ah...</p>
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-3 text-xs">
+          <h3 class="font-bold text-sm text-emerald-400 border-b border-slate-800 pb-2 flex items-center justify-between">
+            <span>📖 Setor Mutaba'ah Harian Mandiri</span>
+            <span class="text-[10px] bg-emerald-950 text-emerald-400 px-2 py-0.5 rounded border border-emerald-800">Rumah / Libur</span>
+          </h3>
+          <form onsubmit="handleMutabaahOrtu(event)" class="space-y-3">
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Tanggal Setoran</label>
+              <input type="date" id="mo-tanggal" required class="w-full p-2.5 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Checklist Shalat Fardhu 5 Waktu</label>
+              <div class="grid grid-cols-5 gap-1.5 text-center text-[11px]">
+                <label class="p-2 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                  <input type="checkbox" id="mo-subuh" checked class="accent-emerald-500 w-3.5 h-3.5"> <span class="text-slate-300">Subuh</span>
+                </label>
+                <label class="p-2 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                  <input type="checkbox" id="mo-dzuhur" checked class="accent-emerald-500 w-3.5 h-3.5"> <span class="text-slate-300">Dzuhur</span>
+                </label>
+                <label class="p-2 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                  <input type="checkbox" id="mo-ashar" checked class="accent-emerald-500 w-3.5 h-3.5"> <span class="text-slate-300">Ashar</span>
+                </label>
+                <label class="p-2 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                  <input type="checkbox" id="mo-maghrib" checked class="accent-emerald-500 w-3.5 h-3.5"> <span class="text-slate-300">Maghrib</span>
+                </label>
+                <label class="p-2 border border-slate-700 rounded-xl bg-slate-950 flex flex-col items-center gap-1 cursor-pointer hover:border-emerald-500/50">
+                  <input type="checkbox" id="mo-isya" checked class="accent-emerald-500 w-3.5 h-3.5"> <span class="text-slate-300">Isya</span>
+                </label>
+              </div>
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Tilawah / Surah Mandiri</label>
+              <input type="text" id="mo-tilawah" placeholder="Contoh: Surah Al-Waqi'ah 1-20" class="w-full p-2.5 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+            </div>
+            <div>
+              <label class="block font-bold text-slate-300 mb-1.5">Catatan Orang Tua</label>
+              <textarea id="mo-catatan" rows="2" placeholder="Catatan ibadah / adab ananda di rumah..." class="w-full p-2.5 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
+            </div>
+            <button type="submit" id="btn-mo" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2.5 rounded-xl shadow-lg transition-all">Kirim Mutaba'ah Rumah ke Guru</button>
+          </form>
+        </div>
+
+        <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-3">
+          <h3 class="font-bold text-sm text-emerald-400 border-b border-slate-800 pb-2">Riwayat Mutaba'ah Ananda</h3>
+          <div id="list-mutabaah" class="space-y-3 text-xs">
+            <p class="text-slate-500">Memuat data mutaba'ah...</p>
           </div>
         </div>
       </div>
 
-      <!-- TAB IZIN -->
+      <!-- TAB 4: SURAT IZIN -->
       <div id="seco-izin" class="space-y-4 hidden">
-        <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-          <h3 class="font-bold text-sm text-teal-800 mb-3">Kirim Surat Izin / Sakit</h3>
+        <div class="bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-sm space-y-4 text-xs">
+          <h3 class="font-bold text-sm text-emerald-400 border-b border-slate-800 pb-2">Kirim Surat Izin / Sakit Online</h3>
           <form onsubmit="handleSendIzin(event)" class="space-y-3">
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Tanggal Izin</label>
-              <input type="date" id="iz-tanggal" required class="w-full p-2 border rounded-lg text-xs outline-none">
+              <label class="block font-bold text-slate-300 mb-1.5">Tanggal Izin</label>
+              <input type="date" id="iz-tanggal" required class="w-full p-3 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Jenis Izin</label>
-              <select id="iz-jenis" required class="w-full p-2 border rounded-lg text-xs outline-none">
-                <option value="Sakit">Sakit</option>
-                <option value="Izin Acara Keluarga">Izin Acara Keluarga</option>
-                <option value="Lainnya">Lainnya</option>
+              <label class="block font-bold text-slate-300 mb-1.5">Jenis Izin</label>
+              <select id="iz-jenis" required class="w-full p-3 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500">
+                <option value="Sakit">🏥 Sakit</option>
+                <option value="Izin Acara Keluarga">🏡 Izin Acara Keluarga</option>
+                <option value="Lainnya">📝 Lainnya</option>
               </select>
             </div>
             <div>
-              <label class="block text-xs font-bold text-slate-600 mb-1">Alasan / Keterangan</label>
-              <textarea id="iz-alasan" rows="3" required class="w-full p-2 border rounded-lg text-xs outline-none"></textarea>
+              <label class="block font-bold text-slate-300 mb-1.5">Alasan / Keterangan</label>
+              <textarea id="iz-alasan" rows="3" required placeholder="Contoh: Ananda demam tinggi sejak semalam..." class="w-full p-3 bg-slate-950 border border-slate-700 text-slate-100 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500"></textarea>
             </div>
-            <button type="submit" class="w-full bg-teal-600 text-white py-2 rounded-lg font-bold text-xs hover:bg-teal-700">Kirim Surat Izin</button>
+            <button type="submit" id="btn-iz" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-3 rounded-xl font-bold shadow-lg transition-all">Kirim Surat Izin</button>
           </form>
         </div>
       </div>
@@ -115,6 +183,24 @@
       }
     });
 
+    function getYouTubeEmbedUrl(url) {
+      if (!url) return null;
+      try {
+        let videoId = null;
+        if (url.includes('youtu.be/')) {
+          videoId = url.split('youtu.be/')[1].split('?')[0].split('&')[0];
+        } else if (url.includes('youtube.com/watch')) {
+          const urlParams = new URLSearchParams(url.split('?')[1]);
+          videoId = urlParams.get('v');
+        } else if (url.includes('youtube.com/embed/')) {
+          videoId = url.split('youtube.com/embed/')[1].split('?')[0];
+        }
+        return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+      } catch (e) {
+        return null;
+      }
+    }
+
     function formatDateIndo(dateStr) {
       if (!dateStr || dateStr === '-') return '-';
       let cleanStr = String(dateStr).trim();
@@ -129,22 +215,28 @@
 
     async function handleLogin(e) {
       e.preventDefault();
+      const btn = document.getElementById('btn-login');
+      btn.disabled = true; btn.innerText = 'Memeriksa...';
+
       const payload = {
         action: 'login',
         siswaId: document.getElementById('login-id').value,
         pin: document.getElementById('login-pin').value
       };
       
-      const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      const data = await res.json();
-      
-      if (data.status === 'success') {
-        currentSiswa = data.siswa;
-        localStorage.setItem("siswa_session", JSON.stringify(currentSiswa));
-        showApp();
-      } else {
-        alert(data.message || 'Login gagal!');
-      }
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        
+        if (data.status === 'success') {
+          currentSiswa = data.siswa;
+          localStorage.setItem("siswa_session", JSON.stringify(currentSiswa));
+          showApp();
+        } else {
+          alert(data.message || 'ID Siswa atau PIN salah!');
+        }
+      } catch(e) { alert('Terjadi kesalahan koneksi.'); }
+      finally { btn.disabled = false; btn.innerText = 'Masuk Akun Siswa'; }
     }
 
     function showApp() {
@@ -152,10 +244,12 @@
       document.getElementById('app-screen').classList.remove('hidden');
       document.getElementById('user-nama').innerText = currentSiswa.nama;
       document.getElementById('user-id').innerText = `ID: ${currentSiswa.id}`;
-      document.getElementById('iz-tanggal').value = new Date().toISOString().split('T')[0];
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('iz-tanggal').value = today;
+      document.getElementById('mo-tanggal').value = today;
       
       loadPengumuman();
-      loadMateri();
+      loadMateri('ALL');
       loadMutabaah();
     }
 
@@ -168,9 +262,11 @@
       ['pengumuman', 'materi', 'mutabaah', 'izin'].forEach(t => {
         document.getElementById(`seco-${t}`).classList.toggle('hidden', t !== tab);
         const btn = document.getElementById(`tabo-${t}`);
-        btn.className = (t === tab) ? 
-          "px-3 py-1.5 font-semibold rounded-lg bg-teal-700 text-white text-xs whitespace-nowrap" : 
-          "px-3 py-1.5 font-semibold rounded-lg bg-white text-slate-600 text-xs whitespace-nowrap";
+        if(t === tab) {
+          btn.className = "px-3.5 py-2 font-bold rounded-xl bg-emerald-600 text-white text-xs whitespace-nowrap shadow-md";
+        } else {
+          btn.className = "px-3.5 py-2 font-semibold rounded-xl bg-slate-900 border border-slate-800 text-slate-400 text-xs whitespace-nowrap hover:bg-slate-800";
+        }
       });
     }
 
@@ -179,46 +275,87 @@
         const res = await fetch(`${API_URL}?action=getPengumuman`);
         const data = await res.json();
         const container = document.getElementById('list-pengumuman');
-        if(!data.length) { container.innerHTML = '<p class="text-xs text-slate-500">Belum ada pengumuman.</p>'; return; }
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada pengumuman.</p>'; return; }
+        
         container.innerHTML = data.map(p => `
-          <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-2">
+          <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-1.5">
             <div class="flex justify-between items-start">
-              <h4 class="font-bold text-sm text-teal-800">${p.judul}</h4>
-              <span class="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${formatDateIndo(p.tanggal)}</span>
+              <h4 class="font-bold text-sm text-emerald-400">${p.judul}</h4>
+              <span class="text-[10px] bg-slate-800 text-slate-400 px-2 py-0.5 rounded">${formatDateIndo(p.tanggal)}</span>
             </div>
-            <p class="text-xs text-slate-600 leading-relaxed">${p.konten}</p>
+            <p class="text-slate-300 text-xs leading-relaxed">${p.konten}</p>
           </div>
         `).join('');
       } catch(e) { console.error(e); }
     }
 
-    async function loadMateri() {
+    async function loadMateri(mapel) {
       try {
-        const res = await fetch(`${API_URL}?action=getMateri`);
+        const res = await fetch(`${API_URL}?action=getMateri&mapel=${mapel}`);
         const data = await res.json();
         const container = document.getElementById('list-materi');
-        if(!data.length) { container.innerHTML = '<p class="text-xs text-slate-500">Belum ada materi pembelajaran.</p>'; return; }
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada materi pembelajaran untuk mata pelajaran ini.</p>'; return; }
         
         container.innerHTML = data.map(m => {
-          let embedUrl = m.videoUrl;
-          if (m.videoUrl.includes('watch?v=')) {
-            embedUrl = m.videoUrl.replace('watch?v=', 'embed/');
-          }
+          const embedUrl = getYouTubeEmbedUrl(m.videoUrl);
           return `
-            <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+            <div class="bg-slate-900 p-4 rounded-2xl border border-slate-800 shadow-sm space-y-3 text-xs">
               <div class="flex justify-between items-center">
-                <span class="text-xs font-bold text-teal-700 bg-teal-50 px-2 py-1 rounded border border-teal-200">${m.mapel}</span>
+                <span class="text-[11px] font-bold text-emerald-400 bg-emerald-950 border border-emerald-800 px-2.5 py-0.5 rounded-full">${m.mapel}</span>
                 <span class="text-[10px] text-slate-500">${formatDateIndo(m.tanggal)}</span>
               </div>
-              <h4 class="font-bold text-sm text-slate-800">${m.judul}</h4>
-              <div class="aspect-video w-full rounded-lg overflow-hidden bg-black">
-                <iframe src="${embedUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
-              </div>
-              <p class="text-xs text-slate-600">${m.deskripsi}</p>
+              <h4 class="font-bold text-slate-200 text-sm">${m.judul}</h4>
+              ${m.deskripsi ? `<p class="text-slate-400 text-xs">${m.deskripsi}</p>` : ''}
+              ${embedUrl ? `
+                <div class="aspect-video w-full rounded-xl overflow-hidden bg-black border border-slate-800">
+                  <iframe class="w-full h-full" src="${embedUrl}" title="${m.judul}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              ` : `
+                <a href="${m.videoUrl}" target="_blank" class="inline-flex items-center text-emerald-400 font-bold hover:underline pt-1 text-xs">
+                  🎬 Tonton Video YouTube
+                </a>
+              `}
             </div>
           `;
         }).join('');
       } catch(e) { console.error(e); }
+    }
+
+    async function handleMutabaahOrtu(e) {
+      e.preventDefault();
+      const btn = document.getElementById('btn-mo');
+      btn.disabled = true; btn.innerText = 'Mengirim...';
+
+      const payload = {
+        action: 'addMutabaah',
+        tanggal: document.getElementById('mo-tanggal').value,
+        siswaId: currentSiswa.id,
+        subuh: document.getElementById('mo-subuh').checked ? 'Ya' : 'Belum',
+        dzuhur: document.getElementById('mo-dzuhur').checked ? 'Ya' : 'Belum',
+        ashar: document.getElementById('mo-ashar').checked ? 'Ya' : 'Belum',
+        maghrib: document.getElementById('mo-maghrib').checked ? 'Ya' : 'Belum',
+        isya: document.getElementById('mo-isya').checked ? 'Ya' : 'Belum',
+        tilawah: document.getElementById('mo-tilawah').value || '-',
+        catatan: document.getElementById('mo-catatan').value || '-',
+        pengisi: 'Orang Tua'
+      };
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('mo-tilawah').value = '';
+          document.getElementById('mo-catatan').value = '';
+          loadMutabaah();
+          alert('Mutabaah rumah berhasil dikirim ke Wali Kelas!');
+        } else {
+          alert(data.message || 'Gagal menyimpan mutabaah');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      } finally {
+        btn.disabled = false; btn.innerText = 'Kirim Mutaba\'ah Rumah ke Guru';
+      }
     }
 
     async function loadMutabaah() {
@@ -226,20 +363,25 @@
         const res = await fetch(`${API_URL}?action=getMutabaah&siswaId=${currentSiswa.id}`);
         const data = await res.json();
         const container = document.getElementById('list-mutabaah');
-        if(!data.length) { container.innerHTML = '<p class="text-xs text-slate-500">Belum ada data mutaba\'ah.</p>'; return; }
+        if(!data.length) { container.innerHTML = '<p class="text-slate-500">Belum ada data mutaba\'ah.</p>'; return; }
+        
         container.innerHTML = data.map(m => `
-          <div class="p-3 bg-slate-50 rounded-lg border text-xs space-y-1">
-            <div class="flex justify-between font-bold text-slate-700">
-              <span>Tanggal</span>
-              <span class="text-teal-700">${formatDateIndo(m.tanggal)}</span>
+          <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-2">
+            <div class="flex justify-between font-bold text-slate-300">
+              <span>Setoran Tanggal ${formatDateIndo(m.tanggal)}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] ${m.pengisi === 'Orang Tua' ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-emerald-950 text-emerald-400 border border-emerald-800'}">
+                ${m.pengisi === 'Orang Tua' ? '🏡 Setoran Ortu' : '🏫 Wali Kelas'}
+              </span>
             </div>
-            <div class="grid grid-cols-5 gap-1 text-[10px] pt-1 text-center">
-              <span class="${m.subuh === 'Ya' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-1 rounded">Subuh: ${m.subuh}</span>
-              <span class="${m.dzuhur === 'Ya' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-1 rounded">Dzuhur: ${m.dzuhur}</span>
-              <span class="${m.ashar === 'Ya' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-1 rounded">Ashar: ${m.ashar}</span>
-              <span class="${m.maghrib === 'Ya' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-1 rounded">Maghrib: ${m.maghrib}</span>
-              <span class="${m.isya === 'Ya' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'} p-1 rounded">Isya: ${m.isya}</span>
+            <div class="grid grid-cols-5 gap-1 text-[10px] text-center font-bold">
+              <span class="${m.subuh === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Subuh: ${m.subuh}</span>
+              <span class="${m.dzuhur === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Dzuhur: ${m.dzuhur}</span>
+              <span class="${m.ashar === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Ashar: ${m.ashar}</span>
+              <span class="${m.maghrib === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Maghrib: ${m.maghrib}</span>
+              <span class="${m.isya === 'Ya' ? 'bg-emerald-950 border border-emerald-800 text-emerald-400' : 'bg-rose-950 border border-rose-900 text-rose-400'} p-1 rounded-lg">Isya: ${m.isya}</span>
             </div>
+            ${m.tilawah ? `<p class="text-[11px] text-slate-400">📖 <b class="text-slate-300">Tilawah:</b> ${m.tilawah}</p>` : ''}
+            ${m.catatan ? `<p class="text-[11px] text-slate-400">💬 <b class="text-slate-300">Catatan:</b> ${m.catatan}</p>` : ''}
           </div>
         `).join('');
       } catch(e) { console.error(e); }
@@ -247,6 +389,9 @@
 
     async function handleSendIzin(e) {
       e.preventDefault();
+      const btn = document.getElementById('btn-iz');
+      btn.disabled = true; btn.innerText = 'Mengirim...';
+
       const payload = {
         action: 'addIzin',
         siswaId: currentSiswa.id,
@@ -255,9 +400,21 @@
         jenis: document.getElementById('iz-jenis').value,
         alasan: document.getElementById('iz-alasan').value
       };
-      await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
-      alert('Surat izin berhasil dikirim!');
-      e.target.reset();
+
+      try {
+        const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.getElementById('iz-alasan').value = '';
+          alert('Surat Izin berhasil dikirim ke Wali Kelas.');
+        } else {
+          alert(data.message || 'Gagal mengirim surat izin.');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      } finally {
+        btn.disabled = false; btn.innerText = 'Kirim Surat Izin';
+      }
     }
   </script>
 </body>
