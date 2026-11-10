@@ -334,25 +334,40 @@
       return url && url.startsWith('http') && !url.includes('PRODUKSI_URL_GAS_DI_SINI');
     }
 
-    function formatDateIndo(dateStr) {
-      if (!dateStr) return '-';
-      let cleanStr = String(dateStr);
-      if (cleanStr.includes('T')) {
-        cleanStr = cleanStr.split('T')[0];
-      }
-      const parts = cleanStr.split('-');
-      if (parts.length === 3) {
-        const d = new Date(parts[0], parts[1] - 1, parts[2]);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
-        }
-      }
-      return cleanStr;
+   // Parsing tanggal aman dari Offset Timezone (WIB/UTC)
+function formatDateIndo(dateStr) {
+  if (!dateStr) return '-';
+  
+  // Jika format berupa string tanggal (YYYY-MM-DD atau ISO string)
+  if (typeof dateStr === 'string') {
+    const cleanDate = dateStr.split('T')[0]; // Ambil bagian YYYY-MM-DD saja
+    const parts = cleanDate.split('-');
+    
+    if (parts.length === 3) {
+      const year = parseInt(parts[0], 10);
+      const month = parseInt(parts[1], 10) - 1; // Bulan di JS dimulai dari 0
+      const day = parseInt(parts[2], 10);
+      
+      // Konstruksi tanggal menggunakan Date lokal (Bukan UTC)
+      const date = new Date(year, month, day);
+      return date.toLocaleDateString('id-ID', { 
+        weekday: 'short', 
+        day: 'numeric', 
+        month: 'short', 
+        year: 'numeric' 
+      });
     }
-
-    function getTodayIso() {
-      return new Date().toISOString().split('T')[0];
-    }
+  }
+  
+  // Fallback untuk objek Date biasa
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? dateStr : d.toLocaleDateString('id-ID', { 
+    weekday: 'short', 
+    day: 'numeric', 
+    month: 'short', 
+    year: 'numeric' 
+  });
+}
 
     function initDates() {
       const todayStr = getTodayIso();
