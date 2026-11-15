@@ -176,20 +176,20 @@
         </div>
 
         <div class="flex items-center gap-1.5 sm:gap-2">
-          <!-- Tombol Pilihan Tema Light / Dark -->
-          <button type="button" onclick="toggleTheme()" title="Ganti Tema (Light/Dark)"
-            class="p-2 rounded-xl hover:bg-white/10 transition">
-            <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
-            <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-300"></i>
-          </button>
-
-          <!-- Tombol Refresh Data -->
+          // Tombol Refresh Data
           <button type="button" onclick="refreshCurrentDashboard()" title="Segarkan Data"
             class="p-2 rounded-xl hover:bg-white/10 transition">
             <i data-lucide="refresh-cw" class="w-5 h-5"></i>
           </button>
 
-          <!-- Tombol Lonceng Notifikasi -->
+          // Tombol Aktifkan Push Notifikasi HP
+          <button type="button" id="btn-enable-push" onclick="requestPushPermissionManual()" title="Aktifkan Notifikasi Layar HP"
+            class="hidden px-2.5 py-1.5 rounded-xl bg-amber-400 text-slate-900 text-[11px] font-bold flex items-center gap-1 shadow-xs animate-pulse">
+            <i data-lucide="bell-plus" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Aktifkan Notif</span>
+          </button>
+
+          // Tombol Lonceng Notifikasi
           <button type="button" onclick="toggleNotifModal()" title="Notifikasi" class="relative p-2 rounded-xl hover:bg-white/10 transition">
             <i data-lucide="bell" class="w-5 h-5"></i>
             <span id="notif-badge" class="hidden absolute top-1.5 right-1.5 w-4 h-4 bg-rose-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">0</span>
@@ -293,24 +293,63 @@
           await OneSignal.init({
             appId: APP_CONFIG.ONESIGNAL_APP_ID,
             serviceWorkerParam: { scope: '/lms-4a/' },
-            serviceWorkerPath: 'lms-4a/OneSignalSDKWorker.js',
+            serviceWorkerPath: '/lms-4a/OneSignalSDKWorker.js',
             notifyButton: { enable: false }
           });
 
-          // Sinkronkan Subscription ID saat pengguna sudah login atau baru mengizinkan notifikasi
-          const syncPlayerId = async () => {
+          const updatePushUIAndSync = async () => {
             const subId = OneSignal.User.PushSubscription.id;
+            const optedIn = OneSignal.User.PushSubscription.optedIn;
+            const btnPush = document.getElementById('btn-enable-push');
+
+            if (btnPush) {
+              if (optedIn && subId) {
+                btnPush.classList.add('hidden');
+              } else {
+                btnPush.classList.remove('hidden');
+              }
+            }
+
             if (subId && STATE.token && STATE.user) {
               await apiPost({ action: 'savePushId', playerId: subId });
             }
           };
 
-          OneSignal.User.PushSubscription.addEventListener('change', syncPlayerId);
-          await syncPlayerId();
+          OneSignal.User.PushSubscription.addEventListener('change', updatePushUIAndSync);
+          await updatePushUIAndSync();
         } catch (err) {
           console.warn('OneSignal init info:', err);
+          const btnPush = document.getElementById('btn-enable-push');
+          if (btnPush) btnPush.classList.remove('hidden');
         }
       });
+    }
+
+    async function requestPushPermissionManual() {
+      if (!('Notification' in window)) {
+        showToast('Browser ini belum mendukung notifikasi push. Gunakan Chrome atau buka lewat ikon layar utama.', 'info');
+        return;
+      }
+      if (Notification.permission === 'denied') {
+        showToast('Izin notifikasi diblokir browser. Buka Pengaturan Situs (ikon gembok di bilah alamat) lalu Izinkan Notifikasi.', 'error');
+        return;
+      }
+      if (window.OneSignalDeferred) {
+        OneSignalDeferred.push(async function(OneSignal) {
+          try {
+            await OneSignal.Notifications.requestPermission();
+            await OneSignal.User.PushSubscription.optIn();
+            const subId = OneSignal.User.PushSubscription.id;
+            if (subId && STATE.token) {
+              await apiPost({ action: 'savePushId', playerId: subId });
+              document.getElementById('btn-enable-push')?.classList.add('hidden');
+              showToast('Notifikasi layar HP berhasil diaktifkan!');
+            }
+          } catch (e) {
+            showToast('Pastikan file OneSignalSDKWorker.js sudah terunggah di GitHub.', 'error');
+          }
+        });
+      }
     }
 
     // -----------------------------------------------------------------------
