@@ -304,6 +304,11 @@
           });
 
           const updatePushUIAndSync = async () => {
+            // Pastikan subscription tetap aktif di mode PWA (ikon layar utama)
+            if (Notification.permission === 'granted' && !OneSignal.User.PushSubscription.optedIn) {
+              try { await OneSignal.User.PushSubscription.optIn(); } catch (e) {}
+            }
+
             const subId = OneSignal.User.PushSubscription.id;
             const optedIn = OneSignal.User.PushSubscription.optedIn;
             const btnPush = document.getElementById('btn-enable-push');
@@ -317,12 +322,17 @@
             }
 
             if (subId && STATE.token && STATE.user) {
+              try {
+                await OneSignal.login(String(STATE.user.id));
+              } catch (e) {}
               await apiPost({ action: 'savePushId', playerId: subId });
             }
           };
 
           OneSignal.User.PushSubscription.addEventListener('change', updatePushUIAndSync);
           await updatePushUIAndSync();
+          // Sinkronisasi ulang 3 detik setelah PWA terbuka penuh
+          setTimeout(updatePushUIAndSync, 3000);
         } catch (err) {
           console.warn('OneSignal init info:', err);
           const btnPush = document.getElementById('btn-enable-push');
@@ -707,12 +717,30 @@
       try {
         const res = await apiGet('getNotifikasi');
         if (res.status === 'success') {
+          const prevIds = new Set(STATE.notifications.map(n => n.ID_Notif));
           STATE.notifications = res.data || [];
-          const unread = STATE.notifications.filter(n => n.Status_Baca === 'Belum').length;
+          const unreadList = STATE.notifications.filter(n => n.Status_Baca === 'Belum');
+          const unread = unreadList.length;
           const badge = document.getElementById('notif-badge');
           if (unread > 0) {
             badge.textContent = unread > 9 ? '9+' : unread;
             badge.classList.remove('hidden');
+
+            // Tampilkan notifikasi sistem HP jika ada notifikasi baru yang belum pernah muncul
+            if (prevIds.size > 0 && 'Notification' in window && Notification.permission === 'granted') {
+              const newest = unreadList[0];
+              if (newest && !prevIds.has(newest.ID_Notif)) {
+                try {
+                  navigator.serviceWorker?.ready.then(reg => {
+                    reg.showNotification(newest.Judul, {
+                      body: newest.Ringkasan_Pesan,
+                      icon: EFFECTIVE_LOGO_URL,
+                      badge: EFFECTIVE_LOGO_URL
+                    });
+                  });
+                } catch (e) {}
+              }
+            }
           } else {
             badge.classList.add('hidden');
           }
