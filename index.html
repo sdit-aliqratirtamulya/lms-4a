@@ -23,6 +23,9 @@
   <link rel="manifest" id="pwa-manifest" />
   <link rel="icon" id="pwa-favicon" type="image/png" />
 
+  <!-- OneSignal Web Push SDK v16 -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
     body {
@@ -42,7 +45,7 @@
     const APP_CONFIG = {
       GAS_API_URL: 'https://script.google.com/macros/s/AKfycbxXz0rZ32xIddVi1KUrQ2c2rWnI5EmDq1K5mjq93-y5LuKnsboTyqT3AR717YKHKU-shA/exec',
       LOGO_URL: './logo.png', // Otomatis membaca file logo.png di folder utama repositori GitHub
-      ONESIGNAL_APP_ID: '', // Opsional: Isi jika sudah daftar OneSignal
+      ONESIGNAL_APP_ID: '12fffadc-e743-4679-8ba1-d72a1525a8e6',
       POLLING_INTERVAL_MS: 60000 // Cek notifikasi baru tiap 60 detik
     };
 
@@ -271,12 +274,44 @@
     document.addEventListener('DOMContentLoaded', () => {
       renderSchoolLogo();
       lucide.createIcons();
+      initOneSignalPush();
       if (STATE.token && STATE.user) {
         initAppShell();
       } else {
         showLoginView();
       }
     });
+
+    // -----------------------------------------------------------------------
+    // A0. INTEGRASI ONESIGNAL WEB PUSH NOTIFICATION
+    // -----------------------------------------------------------------------
+    function initOneSignalPush() {
+      if (!APP_CONFIG.ONESIGNAL_APP_ID) return;
+      window.OneSignalDeferred = window.OneSignalDeferred || [];
+      OneSignalDeferred.push(async function(OneSignal) {
+        try {
+          await OneSignal.init({
+            appId: APP_CONFIG.ONESIGNAL_APP_ID,
+            serviceWorkerParam: { scope: '/lms-4a/' },
+            serviceWorkerPath: 'lms-4a/OneSignalSDKWorker.js',
+            notifyButton: { enable: false }
+          });
+
+          // Sinkronkan Subscription ID saat pengguna sudah login atau baru mengizinkan notifikasi
+          const syncPlayerId = async () => {
+            const subId = OneSignal.User.PushSubscription.id;
+            if (subId && STATE.token && STATE.user) {
+              await apiPost({ action: 'savePushId', playerId: subId });
+            }
+          };
+
+          OneSignal.User.PushSubscription.addEventListener('change', syncPlayerId);
+          await syncPlayerId();
+        } catch (err) {
+          console.warn('OneSignal init info:', err);
+        }
+      });
+    }
 
     // -----------------------------------------------------------------------
     // A. HELPER UI (LOGO, TEMA, LOADER, TOAST, IMAGE COMPRESSOR)
@@ -465,6 +500,16 @@
           localStorage.setItem('lms_user', JSON.stringify(res.user));
           showToast('Selamat datang kembali!');
           initAppShell();
+          // Minta izin notifikasi layar kunci HP setelah login berhasil
+          if (window.OneSignalDeferred) {
+            OneSignalDeferred.push(async function(OneSignal) {
+              try {
+                await OneSignal.Slidedown.promptPush();
+                const subId = OneSignal.User.PushSubscription.id;
+                if (subId) await apiPost({ action: 'savePushId', playerId: subId });
+              } catch (e) {}
+            });
+          }
         } else {
           showToast(res.message || 'Login gagal. Periksa kembali data Anda.', 'error');
         }
