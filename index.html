@@ -19,7 +19,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
-  <!-- PWA Manifest Inline (Agar langsung mendukung Add to Home Screen tanpa file terpisah) -->
+  <!-- PWA Manifest Inline -->
   <link rel="manifest" id="pwa-manifest" />
   <link rel="icon" id="pwa-favicon" type="image/png" />
 
@@ -39,30 +39,29 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 antialiased pb-20 md:pb-6 transition-colors duration-200">
 
   <!-- ===================================================================== -->
-  <!-- 1. KONFIGURASI FRONTEND (WAJIB DIISI URL WEB APP GAS ANDA)            -->
+  <!-- 1. KONFIGURASI FRONTEND                                               -->
   <!-- ===================================================================== -->
   <script>
     const APP_CONFIG = {
       GAS_API_URL: 'https://script.google.com/macros/s/AKfycbxXz0rZ32xIddVi1KUrQ2c2rWnI5EmDq1K5mjq93-y5LuKnsboTyqT3AR717YKHKU-shA/exec',
-      LOGO_URL: './logo.png', // Otomatis membaca file logo.png di folder utama repositori GitHub
+      LOGO_URL: './logo.png',
       ONESIGNAL_APP_ID: '12fffadc-e743-4679-8ba1-d72a1525a8e6',
-      POLLING_INTERVAL_MS: 60000 // Cek notifikasi baru tiap 60 detik
+      POLLING_INTERVAL_MS: 60000
     };
 
     const DEFAULT_ICON_URL = 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png';
     const EFFECTIVE_LOGO_URL = APP_CONFIG.LOGO_URL || DEFAULT_ICON_URL;
     document.getElementById('pwa-favicon').setAttribute('href', EFFECTIVE_LOGO_URL);
 
-    // Terapkan tema tersimpan sejak awal agar tidak berkedip
     if (localStorage.getItem('lms_theme') === 'dark' || (!localStorage.getItem('lms_theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
       document.documentElement.classList.add('dark');
     }
 
-    // Generate PWA Manifest secara dinamis
     const manifestObj = {
       name: "LMS SDIT Al-Iqra Tirtamulya",
       short_name: "LMS Al-Iqra",
-      start_url: "./",
+      start_url: "/lms-4a/",
+      scope: "/lms-4a/",
       display: "standalone",
       background_color: "#ffffff",
       theme_color: "#047857",
@@ -94,7 +93,6 @@
   <!-- 3. HALAMAN LOGIN (AUTHENTICATION VIEW)                                -->
   <!-- ===================================================================== -->
   <div id="view-login" class="relative min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-br from-emerald-800 via-emerald-700 to-teal-600 dark:from-slate-950 dark:via-emerald-950 dark:to-slate-900">
-    <!-- Tombol Tema di Halaman Login -->
     <button type="button" onclick="toggleTheme()" title="Ganti Tema Light/Dark"
       class="absolute top-4 right-4 p-2.5 rounded-2xl bg-white/15 hover:bg-white/25 text-white backdrop-blur-xs transition">
       <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
@@ -111,7 +109,6 @@
       </div>
 
       <form id="form-login" class="p-6 space-y-4">
-        <!-- Switch Role -->
         <div>
           <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider mb-2">Masuk Sebagai</label>
           <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-xl">
@@ -174,12 +171,18 @@
             <p id="header-subtitle" class="text-[11px] text-emerald-100 dark:text-slate-400 truncate">Memuat profil...</p>
           </div>
         </div>
-        <div class="flex items-center gap-1 sm:gap-2 shrink-0">
+        <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
           <!-- Tombol Ganti Tema Light/Dark -->
           <button type="button" onclick="toggleTheme()" title="Ganti Tema Light/Dark"
             class="p-2 rounded-xl hover:bg-white/10 transition">
             <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
             <i data-lucide="sun" class="w-5 h-5 hidden dark:block text-amber-300"></i>
+          </button>
+
+          <!-- Tombol Ubah Kata Sandi Mandiri -->
+          <button type="button" onclick="openPasswordModal()" title="Ubah Kata Sandi"
+            class="p-2 rounded-xl hover:bg-white/10 transition">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
           </button>
 
           <!-- Tombol Refresh Data -->
@@ -220,8 +223,9 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- 5. MODAL PUSAT NOTIFIKASI & MODAL KONFIRMASI LOGOUT                   -->
+  <!-- 5. MODALS (NOTIFIKASI, LOGOUT, UBAH PASSWORD, RIWAYAT TAHFIDZ)        -->
   <!-- ===================================================================== -->
+  <!-- Modal Pusat Notifikasi -->
   <div id="modal-notif" class="fixed inset-0 bg-slate-900/60 z-40 hidden flex items-end md:items-center justify-center p-0 md:p-4">
     <div class="bg-white dark:bg-slate-900 w-full md:max-w-lg rounded-t-3xl md:rounded-3xl max-h-[80vh] flex flex-col shadow-2xl border border-slate-100 dark:border-slate-800">
       <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
@@ -239,7 +243,67 @@
     </div>
   </div>
 
-  <!-- Modal Konfirmasi Keluar (Pengganti confirm() bawaan browser) -->
+  <!-- Modal Riwayat Lengkap Setoran Tahfidz -->
+  <div id="modal-tahfidz" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 hidden items-end md:items-center justify-center p-0 md:p-4">
+    <div class="bg-white dark:bg-slate-900 w-full md:max-w-lg rounded-t-3xl md:rounded-3xl max-h-[85vh] flex flex-col shadow-2xl border border-slate-100 dark:border-slate-800">
+      <div class="p-4 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <i data-lucide="award" class="w-5 h-5 text-amber-500"></i>
+          <h3 class="font-bold text-slate-800 dark:text-white">Riwayat Lengkap Tahfidz</h3>
+        </div>
+        <button type="button" onclick="closeTahfidzModal()" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <div id="tahfidz-history-list" class="p-4 overflow-y-auto space-y-2.5 flex-1"></div>
+    </div>
+  </div>
+
+  <!-- Modal Ubah Kata Sandi Mandiri -->
+  <div id="modal-password" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 space-y-4">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+            <i data-lucide="key-round" class="w-5 h-5"></i>
+          </div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Ubah Kata Sandi</h3>
+        </div>
+        <button type="button" onclick="closePasswordModal()" class="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form onsubmit="submitUbahPassword(event)" class="space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Kata Sandi Lama</label>
+          <input type="password" id="pass-old" required placeholder="Masukkan sandi saat ini"
+            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm dark:text-white" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Kata Sandi Baru (Min. 6 karakter)</label>
+          <input type="password" id="pass-new" required minlength="6" placeholder="Masukkan sandi baru"
+            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm dark:text-white" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">Konfirmasi Kata Sandi Baru</label>
+          <input type="password" id="pass-confirm" required minlength="6" placeholder="Ulangi sandi baru"
+            class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm dark:text-white" />
+        </div>
+        <div class="grid grid-cols-2 gap-2.5 pt-2">
+          <button type="button" onclick="closePasswordModal()"
+            class="py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold">
+            Batal
+          </button>
+          <button type="submit"
+            class="py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold shadow-md">
+            Simpan Sandi
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Konfirmasi Keluar -->
   <div id="modal-logout" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4">
     <div class="bg-white dark:bg-slate-900 w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-800 text-center space-y-4">
       <div class="w-12 h-12 rounded-2xl bg-rose-100 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto">
@@ -263,10 +327,9 @@
   </div>
 
   <!-- ===================================================================== -->
-  <!-- 6. LOGIKA JAVASCRIPT APLIKASI (STATE, API CLIENT, UI RENDERER)        -->
+  <!-- 6. LOGIKA JAVASCRIPT APLIKASI                                         -->
   <!-- ===================================================================== -->
   <script>
-    // State Global
     let STATE = {
       token: localStorage.getItem('lms_token') || null,
       user: JSON.parse(localStorage.getItem('lms_user') || 'null'),
@@ -276,7 +339,6 @@
       pollingTimer: null
     };
 
-    // Inisialisasi saat halaman dimuat
     document.addEventListener('DOMContentLoaded', () => {
       renderSchoolLogo();
       lucide.createIcons();
@@ -299,12 +361,11 @@
           await OneSignal.init({
             appId: APP_CONFIG.ONESIGNAL_APP_ID,
             serviceWorkerParam: { scope: '/lms-4a/' },
-            serviceWorkerPath: '/lms-4a/OneSignalSDKWorker.js',
+            serviceWorkerPath: 'OneSignalSDKWorker.js',
             notifyButton: { enable: false }
           });
 
           const updatePushUIAndSync = async () => {
-            // Pastikan subscription tetap aktif di mode PWA (ikon layar utama)
             if (Notification.permission === 'granted' && !OneSignal.User.PushSubscription.optedIn) {
               try { await OneSignal.User.PushSubscription.optIn(); } catch (e) {}
             }
@@ -331,7 +392,6 @@
 
           OneSignal.User.PushSubscription.addEventListener('change', updatePushUIAndSync);
           await updatePushUIAndSync();
-          // Sinkronisasi ulang 3 detik setelah PWA terbuka penuh
           setTimeout(updatePushUIAndSync, 3000);
         } catch (err) {
           console.warn('OneSignal init info:', err);
@@ -347,7 +407,7 @@
         return;
       }
       if (Notification.permission === 'denied') {
-        showToast('Izin notifikasi diblokir browser. Buka Pengaturan Situs (ikon gembok di bilah alamat) lalu Izinkan Notifikasi.', 'error');
+        showToast('Izin notifikasi diblokir browser. Buka Pengaturan Situs lalu Izinkan Notifikasi.', 'error');
         return;
       }
       if (window.OneSignalDeferred) {
@@ -359,10 +419,12 @@
             if (subId && STATE.token) {
               await apiPost({ action: 'savePushId', playerId: subId });
               document.getElementById('btn-enable-push')?.classList.add('hidden');
-              showToast('Notifikasi layar HP berhasil diaktifkan!');
+              showToast('Notifikasi layar HP aktif! ID Perangkat tersimpan.');
+            } else {
+              showToast('Izin diberikan, menunggu registrasi perangkat. Ketuk sekali lagi dalam 3 detik.', 'info');
             }
           } catch (e) {
-            showToast('Pastikan file OneSignalSDKWorker.js sudah terunggah di GitHub.', 'error');
+            showToast('Gagal mendaftarkan Service Worker: ' + (e.message || e), 'error');
           }
         });
       }
@@ -409,7 +471,6 @@
       setTimeout(() => toast.remove(), 4000);
     }
 
-    // Format Tanggal dari Google Sheets (yyyy-MM-dd) ke tampilan Indonesia (15 Nov 2026) tanpa geser zona waktu
     function formatTanggalSheets(val) {
       if (!val) return '-';
       const str = String(val).trim();
@@ -428,12 +489,10 @@
       return str;
     }
 
-    // Mendapatkan tanggal hari ini dalam format yyyy-MM-dd zona waktu WIB (Asia/Jakarta)
     function getTodayWIB() {
       return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Jakarta', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     }
 
-    // Kompresi gambar di sisi klien (HTML5 Canvas) sebelum dikirim ke Google Drive
     function compressImageToBase64(file, maxWidth = 800) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -462,13 +521,9 @@
     }
 
     // -----------------------------------------------------------------------
-    // B. API CLIENT (KOMUNIKASI KE GOOGLE APPS SCRIPT)
+    // B. API CLIENT
     // -----------------------------------------------------------------------
     async function apiGet(action, params = {}) {
-      if (APP_CONFIG.GAS_API_URL.includes('ISI_DENGAN')) {
-        showToast('Harap isi GAS_API_URL di kode index.html terlebih dahulu!', 'error');
-        throw new Error('GAS_API_URL belum dikonfigurasi');
-      }
       const url = new URL(APP_CONFIG.GAS_API_URL);
       url.searchParams.append('action', action);
       url.searchParams.append('token', STATE.token);
@@ -484,12 +539,7 @@
     }
 
     async function apiPost(payload) {
-      if (APP_CONFIG.GAS_API_URL.includes('ISI_DENGAN')) {
-        showToast('Harap isi GAS_API_URL di kode index.html terlebih dahulu!', 'error');
-        throw new Error('GAS_API_URL belum dikonfigurasi');
-      }
       payload.token = STATE.token;
-      // Menggunakan text/plain agar terhindar dari CORS Preflight OPTIONS pada Google Apps Script
       const res = await fetch(APP_CONFIG.GAS_API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -514,7 +564,7 @@
     }
 
     // -----------------------------------------------------------------------
-    // C. AUTENTIKASI (LOGIN & LOGOUT)
+    // C. AUTENTIKASI, GANTI PASSWORD MANDIRI & LOGOUT
     // -----------------------------------------------------------------------
     function setLoginRole(role) {
       document.getElementById('login-role').value = role;
@@ -555,7 +605,6 @@
           localStorage.setItem('lms_user', JSON.stringify(res.user));
           showToast('Selamat datang kembali!');
           initAppShell();
-          // Minta izin notifikasi layar kunci HP setelah login berhasil
           if (window.OneSignalDeferred) {
             OneSignalDeferred.push(async function(OneSignal) {
               try {
@@ -575,6 +624,49 @@
         setLoading(false);
       }
     });
+
+    function openPasswordModal() {
+      const modal = document.getElementById('modal-password');
+      document.getElementById('pass-old').value = '';
+      document.getElementById('pass-new').value = '';
+      document.getElementById('pass-confirm').value = '';
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closePasswordModal() {
+      const modal = document.getElementById('modal-password');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    async function submitUbahPassword(e) {
+      e.preventDefault();
+      const oldPassword = document.getElementById('pass-old').value;
+      const newPassword = document.getElementById('pass-new').value;
+      const confirmPassword = document.getElementById('pass-confirm').value;
+
+      if (newPassword !== confirmPassword) {
+        showToast('Konfirmasi kata sandi baru tidak cocok.', 'error');
+        return;
+      }
+
+      setLoading(true, 'Menyimpan kata sandi baru...');
+      try {
+        const res = await apiPost({ action: 'ubahPassword', oldPassword, newPassword });
+        if (res.status === 'success') {
+          closePasswordModal();
+          showToast(res.message);
+        } else {
+          showToast(res.message || 'Gagal mengubah kata sandi.', 'error');
+        }
+      } catch (err) {
+        showToast('Terjadi kesalahan koneksi.', 'error');
+      } finally {
+        setLoading(false);
+      }
+    }
 
     function openLogoutModal() {
       const modal = document.getElementById('modal-logout');
@@ -640,7 +732,6 @@
       refreshCurrentDashboard();
       fetchNotifications();
 
-      // Polling notifikasi setiap 60 detik
       clearInterval(STATE.pollingTimer);
       STATE.pollingTimer = setInterval(fetchNotifications, APP_CONFIG.POLLING_INTERVAL_MS);
     }
@@ -726,7 +817,6 @@
             badge.textContent = unread > 9 ? '9+' : unread;
             badge.classList.remove('hidden');
 
-            // Tampilkan notifikasi sistem HP jika ada notifikasi baru yang belum pernah muncul
             if (prevIds.size > 0 && 'Notification' in window && Notification.permission === 'granted') {
               const newest = unreadList[0];
               if (newest && !prevIds.has(newest.ID_Notif)) {
@@ -793,7 +883,7 @@
     }
 
     // -----------------------------------------------------------------------
-    // F. ROUTER TAMPILAN UTAMA & RENDERER DASHBOARD ORANG TUA
+    // F. ROUTER TAMPILAN UTAMA & RENDERER DASHBOARD ORANG TUA (PRIORITAS 1)
     // -----------------------------------------------------------------------
     function renderActiveView() {
       const el = document.getElementById('app-content');
@@ -818,17 +908,52 @@
       lucide.createIcons();
     }
 
+    function openTahfidzModal() {
+      const d = STATE.dashboardData || { tahfidz: [] };
+      const listEl = document.getElementById('tahfidz-history-list');
+      if (!d.tahfidz.length) {
+        listEl.innerHTML = `<p class="text-sm text-slate-400 text-center py-8">Belum ada riwayat setoran tahfidz.</p>`;
+      } else {
+        listEl.innerHTML = d.tahfidz.map(t => `
+          <div class="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-bold text-slate-800 dark:text-white">QS. ${t.Nama_Surat} (Ayat ${t.Ayat_Mulai}–${t.Ayat_Selesai})</p>
+              <p class="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">${formatTanggalSheets(t.Tanggal)} • Penguji: ${t.Penguji || 'Wali Kelas'}</p>
+            </div>
+            <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 shrink-0">
+              ${t.Predikat_Kelancaran}
+            </span>
+          </div>
+        `).join('');
+      }
+      const modal = document.getElementById('modal-tahfidz');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      lucide.createIcons();
+    }
+
+    function closeTahfidzModal() {
+      const modal = document.getElementById('modal-tahfidz');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
     function renderOrtuHome(el) {
-      const d = STATE.dashboardData || { pengumuman: [], jurnal: [], tahfidz: [] };
+      const d = STATE.dashboardData || { pengumuman: [], jurnal: [], tahfidz: [], stats: { persenHadir: 100, totalHadir: 0, totalHariAbsen: 0, mutabaah7Hari: 0 } };
       const latestTahfidz = d.tahfidz[0];
+      const stats = d.stats || { persenHadir: 100, totalHadir: 0, totalHariAbsen: 0, mutabaah7Hari: 0 };
 
       el.innerHTML = `
         <div class="space-y-5">
-          <!-- Kartu Sorotan Tahfidz Terbaru -->
+          <!-- Kartu Sorotan Tahfidz Terbaru + Tombol Riwayat Lengkap -->
           <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white p-5 rounded-3xl shadow-lg">
-            <div class="flex items-center justify-between">
+            <div class="flex items-center justify-between gap-2">
               <span class="text-xs font-semibold uppercase tracking-wider bg-white/20 px-2.5 py-1 rounded-full">Capaian Tahfidz Terbaru</span>
-              <i data-lucide="award" class="w-5 h-5 text-amber-300"></i>
+              <button type="button" onclick="openTahfidzModal()"
+                class="text-[11px] font-semibold bg-white/15 hover:bg-white/25 px-3 py-1 rounded-full flex items-center gap-1 transition">
+                <span>Riwayat (${d.tahfidz.length})</span>
+                <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
             ${latestTahfidz ? `
               <h3 class="text-xl font-bold mt-3">QS. ${latestTahfidz.Nama_Surat} (Ayat ${latestTahfidz.Ayat_Mulai}–${latestTahfidz.Ayat_Selesai})</h3>
@@ -836,6 +961,36 @@
             ` : `
               <p class="text-sm text-emerald-100 mt-3">Belum ada catatan setoran tahfidz terbaru.</p>
             `}
+          </div>
+
+          <!-- Kartu Statistik Cepat (Quick Stats) -->
+          <div class="grid grid-cols-3 gap-2.5">
+            <div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs">
+              <div class="flex items-center gap-1.5 text-emerald-600 dark:text-emerald-400">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+                <span class="text-[11px] font-semibold">Kehadiran</span>
+              </div>
+              <p class="text-lg font-bold text-slate-800 dark:text-white mt-1">${stats.persenHadir}%</p>
+              <p class="text-[10px] text-slate-400">${stats.totalHadir}/${stats.totalHariAbsen} hari bln ini</p>
+            </div>
+
+            <div onclick="switchTab('mutabaah')" class="cursor-pointer bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-amber-300 transition">
+              <div class="flex items-center gap-1.5 text-amber-500">
+                <i data-lucide="flame" class="w-4 h-4"></i>
+                <span class="text-[11px] font-semibold">Mutaba'ah</span>
+              </div>
+              <p class="text-lg font-bold text-slate-800 dark:text-white mt-1">${stats.mutabaah7Hari}/7</p>
+              <p class="text-[10px] text-slate-400">hari pekan ini</p>
+            </div>
+
+            <div onclick="openTahfidzModal()" class="cursor-pointer bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xs hover:border-teal-300 transition">
+              <div class="flex items-center gap-1.5 text-teal-600 dark:text-teal-400">
+                <i data-lucide="book-marked" class="w-4 h-4"></i>
+                <span class="text-[11px] font-semibold">Setoran</span>
+              </div>
+              <p class="text-lg font-bold text-slate-800 dark:text-white mt-1">${d.tahfidz.length}x</p>
+              <p class="text-[10px] text-slate-400">total tahfidz</p>
+            </div>
           </div>
 
           <!-- Pengumuman Sekolah & Kelas -->
@@ -1047,60 +1202,98 @@
     }
 
     // =======================================================================
-    // VIEW 2: WALI KELAS (GURU)
+    // VIEW 2: WALI KELAS (GURU) — PRIORITAS 1 (BANNER IZIN & SET SEMUA HADIR)
     // =======================================================================
     function renderGuruPresensi(el) {
       const d = STATE.dashboardData || { siswaList: [], kehadiranHariIni: [] };
       const absenMap = {};
-      d.kehadiranHariIni.forEach(k => { absenMap[String(k.NIS_Siswa)] = k; });
+      let pendingCount = 0;
+      d.kehadiranHariIni.forEach(k => {
+        absenMap[String(k.NIS_Siswa)] = k;
+        if (k.Validasi_Guru === 'Menunggu Validasi') pendingCount++;
+      });
 
       el.innerHTML = `
-        <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <h3 class="text-lg font-bold text-slate-800 dark:text-white">Presensi & Validasi Izin</h3>
-              <p class="text-xs text-slate-500 dark:text-slate-400">Kelas ${STATE.user.kelas} • Hari Ini</p>
+        <div class="space-y-4">
+          ${pendingCount > 0 ? `
+            <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-800 flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-amber-400/20 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+                <i data-lucide="alert-circle" class="w-5 h-5"></i>
+              </div>
+              <div class="text-xs text-amber-900 dark:text-amber-200">
+                <p class="font-bold">Ada ${pendingCount} Pengajuan Izin/Sakit Menunggu Validasi</p>
+                <p class="opacity-80 mt-0.5">Periksa status siswa bertanda kuning di bawah lalu klik <b>Simpan & Validasi</b>.</p>
+              </div>
             </div>
-            <button onclick="exportLaporanPDF()" class="px-3.5 py-2 bg-slate-800 dark:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
-              <i data-lucide="download" class="w-3.5 h-3.5"></i> Unduh Rekap PDF
+          ` : ''}
+
+          <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <div>
+                <h3 class="text-lg font-bold text-slate-800 dark:text-white">Presensi & Validasi Izin</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Kelas ${STATE.user.kelas} • Hari Ini</p>
+              </div>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="setAllHadir()"
+                  class="px-3 py-2 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 text-xs font-semibold rounded-xl flex items-center gap-1.5 hover:bg-emerald-100 transition">
+                  <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Set Semua Hadir
+                </button>
+                <button type="button" onclick="exportLaporanPDF()"
+                  class="px-3 py-2 bg-slate-800 dark:bg-slate-700 text-white text-xs font-semibold rounded-xl flex items-center gap-1.5">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i> PDF
+                </button>
+              </div>
+            </div>
+
+            <div class="divide-y divide-slate-100 dark:divide-slate-800">
+              ${d.siswaList.map(s => {
+                const existing = absenMap[String(s.nis)];
+                const currentStatus = existing ? existing.Status : 'Hadir';
+                const isPending = existing && existing.Validasi_Guru === 'Menunggu Validasi';
+                return `
+                  <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <p class="text-sm font-bold text-slate-800 dark:text-slate-100">${s.nama} <span class="text-xs font-normal text-slate-400">(${s.nis})</span></p>
+                      ${isPending ? `
+                        <div class="mt-1 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-300">
+                          <span>Pengajuan Ortu: <b>${existing.Status}</b> (${existing.Keterangan_Ortu})</span>
+                          ${existing.Bukti_URL ? `<a href="${existing.Bukti_URL}" target="_blank" class="underline font-bold">Lihat Bukti</a>` : ''}
+                        </div>
+                      ` : ''}
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <select data-nis="${s.nis}" data-pending="${isPending ? '1' : '0'}"
+                        class="presensi-select px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold dark:text-white">
+                        ${['Hadir', 'Sakit', 'Izin', 'Alpa'].map(st => `<option value="${st}" ${currentStatus === st ? 'selected' : ''}>${st}</option>`).join('')}
+                      </select>
+                      <button onclick="resetPasswordSiswa('${s.nis}', '${s.nama}')" title="Reset Password Ortu"
+                        class="p-2 text-slate-400 hover:text-rose-600 rounded-lg border border-slate-200 dark:border-slate-700">
+                        <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
+                      </button>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+
+            <button onclick="simpanPresensiKelas()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow-md">
+              Simpan & Validasi Presensi Kelas
             </button>
           </div>
-
-          <div class="divide-y divide-slate-100 dark:divide-slate-800">
-            ${d.siswaList.map(s => {
-              const existing = absenMap[String(s.nis)];
-              const currentStatus = existing ? existing.Status : 'Hadir';
-              const isPending = existing && existing.Validasi_Guru === 'Menunggu Validasi';
-              return `
-                <div class="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                  <div>
-                    <p class="text-sm font-bold text-slate-800 dark:text-slate-100">${s.nama} <span class="text-xs font-normal text-slate-400">(${s.nis})</span></p>
-                    ${isPending ? `
-                      <div class="mt-1 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-amber-50 dark:bg-amber-950/50 border border-amber-200 dark:border-amber-800 text-[11px] text-amber-800 dark:text-amber-300">
-                        <span>Pengajuan Ortu: <b>${existing.Status}</b> (${existing.Keterangan_Ortu})</span>
-                        ${existing.Bukti_URL ? `<a href="${existing.Bukti_URL}" target="_blank" class="underline font-bold">Lihat Bukti</a>` : ''}
-                      </div>
-                    ` : ''}
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <select data-nis="${s.nis}" class="presensi-select px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold dark:text-white">
-                      ${['Hadir', 'Sakit', 'Izin', 'Alpa'].map(st => `<option value="${st}" ${currentStatus === st ? 'selected' : ''}>${st}</option>`).join('')}
-                    </select>
-                    <button onclick="resetPasswordSiswa('${s.nis}', '${s.nama}')" title="Reset Password Ortu"
-                      class="p-2 text-slate-400 hover:text-rose-600 rounded-lg border border-slate-200 dark:border-slate-700">
-                      <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
-                    </button>
-                  </div>
-                </div>
-              `;
-            }).join('')}
-          </div>
-
-          <button onclick="simpanPresensiKelas()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl text-sm shadow-md">
-            Simpan & Validasi Presensi Kelas
-          </button>
         </div>
       `;
+    }
+
+    function setAllHadir() {
+      const selects = document.querySelectorAll('.presensi-select');
+      let updated = 0;
+      selects.forEach(sel => {
+        if (sel.getAttribute('data-pending') !== '1') {
+          sel.value = 'Hadir';
+          updated++;
+        }
+      });
+      showToast(`${updated} siswa diatur ke status Hadir (pengajuan izin ortu tetap dipertahankan).`, 'info');
     }
 
     async function simpanPresensiKelas() {
@@ -1137,7 +1330,6 @@
       const materiList = (STATE.dashboardData && STATE.dashboardData.materiKelas) || [];
       const pengumumanList = (STATE.dashboardData && STATE.dashboardData.pengumuman) || [];
       el.innerHTML = `
-        <!-- Form Pengumuman Wali Kelas -->
         <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
           <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <i data-lucide="megaphone" class="w-4 h-4 text-sky-600 dark:text-sky-400"></i> Pengumuman Wali Kelas (${STATE.user.kelas})
@@ -1175,7 +1367,6 @@
           ` : ''}
         </div>
 
-        <!-- Form Jurnal Harian -->
         <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
           <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <i data-lucide="notebook-pen" class="w-4 h-4 text-emerald-600 dark:text-emerald-400"></i> Input Jurnal Belajar Harian
@@ -1195,7 +1386,6 @@
           </form>
         </div>
 
-        <!-- Form Tambah Link Materi Pembelajaran -->
         <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
           <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <i data-lucide="link" class="w-4 h-4 text-teal-600 dark:text-teal-400"></i> Bagikan Link Materi Pembelajaran
@@ -1449,7 +1639,7 @@
     }
 
     // =======================================================================
-    // VIEW 3: RUANG KONSULTASI / DISKUSI PRIVAT (ORTU & GURU)
+    // VIEW 3: RUANG KONSULTASI / DISKUSI PRIVAT
     // =======================================================================
     function renderGuruChatSelector(el) {
       const siswaList = (STATE.dashboardData && STATE.dashboardData.siswaList) || [];
@@ -1545,7 +1735,7 @@
     }
 
     // =======================================================================
-    // VIEW 4: KEPALA SEKOLAH (MONITORING EKSEKUTIF & PENGUMUMAN SEKOLAH)
+    // VIEW 4: KEPALA SEKOLAH
     // =======================================================================
     function renderKepsekDashboard(el) {
       const d = STATE.dashboardData || { totalSiswa: 0, kehadiranHariIni: [], jurnalHariIni: [], mutabaahHariIni: [], pengumumanSekolah: [] };
@@ -1578,13 +1768,12 @@
             </div>
           </div>
 
-          <!-- Form Pengumuman Umum Sekolah (Khusus Kepala Sekolah) -->
           <div class="bg-white dark:bg-slate-900 p-5 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xs space-y-4">
             <h3 class="text-base font-bold text-slate-800 dark:text-white flex items-center gap-2">
               <i data-lucide="megaphone" class="w-4 h-4 text-rose-600 dark:text-rose-400"></i> Buat Pengumuman Sekolah (Semua Kelas)
             </h3>
             <form onsubmit="submitPengumuman(event)" class="space-y-3">
-              <input type="text" id="pgm-judul" required placeholder="Judul Pengumuman Resmi Sekolah (cth: Libur Awal Ramadhan / Pembagian Rapor)"
+              <input type="text" id="pgm-judul" required placeholder="Judul Pengumuman Resmi Sekolah"
                 class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm dark:text-white" />
               <textarea id="pgm-isi" required rows="3" placeholder="Tuliskan informasi umum untuk seluruh orang tua siswa dan wali kelas..."
                 class="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm dark:text-white"></textarea>
@@ -1615,7 +1804,7 @@
     }
 
     // =======================================================================
-    // UTILITAS EXPORT LAPORAN PDF BULANAN (CLIENT-SIDE)
+    // UTILITAS EXPORT LAPORAN PDF
     // =======================================================================
     function exportLaporanPDF() {
       const { jsPDF } = window.jspdf;
